@@ -1,4 +1,4 @@
-const friendName = "Sreshtha"; // CHANGE THIS!
+const friendName = "Sreshtha"; 
 
 const nameSpan = document.getElementById('friendName');
 nameSpan.innerText = friendName.toUpperCase();
@@ -16,7 +16,6 @@ const dialogueLayer = document.getElementById('dialogue-layer');
 const climaxLayer = document.getElementById('climax-layer');
 
 const starNodes = document.querySelectorAll('.star-node');
-const svgCanvas = document.getElementById('constellation-lines');
 const partyBanner = document.getElementById('party-banner');
 const instructionText = document.querySelector('.instruction-text');
 const dialogueText = document.getElementById('dialogue-text');
@@ -64,7 +63,6 @@ function handleTrail(x, y) {
 window.addEventListener('mousemove', (e) => handleTrail(e.clientX, e.clientY));
 window.addEventListener('touchmove', (e) => handleTrail(e.touches[0].clientX, e.touches[0].clientY));
 
-
 // --- 1. Geometric Star Formation ---
 function setupStarFormation() {
     const minDim = Math.min(window.innerWidth, window.innerHeight);
@@ -89,14 +87,12 @@ setupStarFormation();
 window.addEventListener('resize', () => {
     canvas.width = window.innerWidth; canvas.height = window.innerHeight;
     setupStarFormation();
-    if (!constellationLayer.classList.contains('hidden') && linesData.length > 0) {
-        drawConstellationLines();
-    }
 });
 
 // --- 2. Box Chase Logic ---
 let taps = 0; const maxTaps = 5;
 let introStarted = false; 
+let currentCornerIndex = -1; 
 
 giftBox.addEventListener('click', (e) => {
     e.preventDefault(); 
@@ -117,7 +113,13 @@ giftBox.addEventListener('click', (e) => {
             { x: w - padding - boxWidth, y: h - padding - boxWidth } 
         ];
 
-        let corner = corners[Math.floor(Math.random() * corners.length)];
+        let nextCornerIndex;
+        do {
+            nextCornerIndex = Math.floor(Math.random() * corners.length);
+        } while (nextCornerIndex === currentCornerIndex);
+        
+        currentCornerIndex = nextCornerIndex;
+        let corner = corners[currentCornerIndex];
 
         giftBox.style.left = `${corner.x}px`; 
         giftBox.style.top = `${corner.y}px`;
@@ -171,8 +173,7 @@ function playIntroDialogue() {
 }
 
 // --- 4. Constellation Phase (Sequential Star Logic) ---
-let unlockedCount = 0; let linesData = []; let currentViewingNode = null; 
-const nodeConnections = [[1,3], [3,5], [5,2], [2,4], [4,1]];
+let unlockedCount = 0; let currentViewingNode = null; 
 
 function startConstellationPhase() {
     constellationLayer.classList.remove('hidden'); 
@@ -180,26 +181,6 @@ function startConstellationPhase() {
     // Only reveal Star #1 to start the sequence
     const firstStar = document.querySelector('.star-node[data-index="1"]');
     if (firstStar) firstStar.classList.add('visible-star');
-    
-    drawConstellationLines();
-}
-
-function drawConstellationLines() {
-    svgCanvas.innerHTML = ''; linesData = [];
-    nodeConnections.forEach(pair => {
-        const nodeA = document.querySelector(`.star-node[data-index="${pair[0]}"]`);
-        const nodeB = document.querySelector(`.star-node[data-index="${pair[1]}"]`);
-        const rect1 = nodeA.getBoundingClientRect();
-        const rect2 = nodeB.getBoundingClientRect();
-        
-        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', rect1.left + rect1.width/2); line.setAttribute('y1', rect1.top + rect1.height/2);
-        line.setAttribute('x2', rect2.left + rect2.width/2); line.setAttribute('y2', rect2.top + rect2.height/2);
-        line.classList.add('constellation-line'); 
-        
-        svgCanvas.appendChild(line);
-        linesData.push({ element: line, nodeA: pair[0], nodeB: pair[1] });
-    });
 }
 
 starNodes.forEach(node => {
@@ -222,20 +203,10 @@ photoOverlay.addEventListener('click', () => {
     
     unlockedCount++;
 
-    // Draw lines between unlocked stars
-    linesData.forEach(lineObj => {
-        if (document.querySelector(`.star-node[data-index="${lineObj.nodeA}"]`).classList.contains('unlocked') && 
-            document.querySelector(`.star-node[data-index="${lineObj.nodeB}"]`).classList.contains('unlocked')) { 
-            lineObj.element.classList.add('drawn'); 
-        }
-    });
-
-    // Sequential Reveal Logic: Pop in the next star
     if (unlockedCount < 5) {
         const nextStar = document.querySelector(`.star-node[data-index="${unlockedCount + 1}"]`);
         if (nextStar) nextStar.classList.add('visible-star');
     } 
-    // Show the Core Star when 5 are done
     else if (unlockedCount === 5) {
         setTimeout(() => {
             const cStar = document.querySelector('.star-node[data-index="0"]');
@@ -245,20 +216,59 @@ photoOverlay.addEventListener('click', () => {
         }, 800); 
     }
     
-    // Core is tapped -> Start Climax Transition
+    // THE TRUE STAR OUTLINE
     if(unlockedCount === 6) { 
         instructionText.style.opacity = '0'; 
         
+        const svgCanvas = document.getElementById('constellation-lines');
+        svgCanvas.innerHTML = ''; 
+        
+        const minDim = Math.min(window.innerWidth, window.innerHeight);
+        const outerRadius = minDim * 0.37;
+        const innerRadius = outerRadius * 0.45; // Depth of the star valleys
+        const cx = window.innerWidth / 2;
+        const cy = window.innerHeight * 0.55;
+        
+        let points = [];
+        for(let i = 0; i < 5; i++) {
+            // 1. Get exact position of the HTML Star Node (Outer Point)
+            const node = document.querySelector(`.star-node[data-index="${i+1}"]`);
+            const rect = node.getBoundingClientRect();
+            points.push({x: rect.left + rect.width/2, y: rect.top + rect.height/2});
+
+            // 2. Calculate the invisible valley (Inner Point)
+            let angleInner = -Math.PI / 2 + (i * (2 * Math.PI / 5)) + (Math.PI / 5);
+            let ix = cx + innerRadius * Math.cos(angleInner);
+            let iy = cy + innerRadius * Math.sin(angleInner);
+            points.push({x: ix, y: iy});
+        }
+        
+        // Draw the 10 lines of the perfect perimeter star
+        points.forEach((p1, index) => {
+            let p2 = points[(index + 1) % points.length];
+            
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', p1.x); 
+            line.setAttribute('y1', p1.y);
+            line.setAttribute('x2', p2.x); 
+            line.setAttribute('y2', p2.y);
+            line.classList.add('constellation-line'); 
+            svgCanvas.appendChild(line);
+            
+            // Pop them in sequentially
+            setTimeout(() => line.classList.add('drawn'), index * 100);
+        });
+
         setTimeout(() => {
             constellationLayer.classList.add('revert-to-stars');
             setTimeout(playDialogue, 2000); 
-        }, 1000); 
+        }, 1500); 
     }
 });
 
 // --- 5. Dialogue Transition ---
 const messages = [
-    "From my random thought at the afternoon...",
+    "From my random thought this afternoon...",
     "And the 2hrs I have spent on this...",
     "There is only one thing left to say..."
 ];
