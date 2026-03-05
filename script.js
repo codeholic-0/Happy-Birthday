@@ -13,12 +13,16 @@ const bgMusic = document.getElementById('bg-music');
 const bgTwilight = document.getElementById('bg-twilight');
 const bgSunflower = document.getElementById('bg-sunflower');
 
+// Flow Layers
 const constellationLayer = document.getElementById('constellation-layer');
+const dialogueLayer = document.getElementById('dialogue-layer');
 const climaxLayer = document.getElementById('climax-layer');
+
 const starNodes = document.querySelectorAll('.star-node');
 const svgCanvas = document.getElementById('constellation-lines');
-const surpriseBanner = document.querySelector('.surprise-banner');
+const partyBanner = document.getElementById('party-banner');
 const instructionText = document.querySelector('.instruction-text');
+const dialogueText = document.getElementById('dialogue-text');
 
 // Overlay Elements
 const photoOverlay = document.getElementById('photo-overlay');
@@ -107,7 +111,7 @@ giftBox.addEventListener('click', (e) => {
     }
 });
 
-// --- 3. Constellation Phase & Tap-to-Dismiss Logic ---
+// --- 3. Constellation Phase ---
 let unlockedCount = 0;
 let linesData = [];
 let currentViewingNode = null; 
@@ -116,8 +120,6 @@ const nodeConnections = [[0,1], [0,2], [0,3], [0,4], [0,5], [0,6], [1,2], [2,3],
 function startConstellationPhase() {
     if(bgMusic) { bgMusic.volume = 0.2; bgMusic.play().catch(e => console.log("Audio needed")); }
     giftBox.style.transform = 'scale(0)';
-    
-    // Fade in the purple twilight layer over the sunset
     bgTwilight.style.opacity = '1';
 
     setTimeout(() => { 
@@ -144,11 +146,10 @@ function drawConstellationLines() {
     });
 }
 
-// Open the Photo
+// Open Photo
 starNodes.forEach(node => {
     node.addEventListener('click', () => {
         if(node.classList.contains('unlocked') || currentViewingNode) return; 
-        
         currentViewingNode = node; 
         overlayImg.src = node.querySelector('img').src;
         overlayCaption.innerText = node.querySelector('.caption').innerText;
@@ -156,10 +157,9 @@ starNodes.forEach(node => {
     });
 });
 
-// Close the Photo
+// Close Photo
 photoOverlay.addEventListener('click', () => {
     if (!currentViewingNode) return;
-
     photoOverlay.classList.remove('active');
     const node = currentViewingNode;
     currentViewingNode = null; 
@@ -191,39 +191,77 @@ photoOverlay.addEventListener('click', () => {
         }, 1000); 
     }
 
-    // SNAP TO CLIMAX: Reduced from 2000ms to 200ms
     if(unlockedCount === starNodes.length) {
         instructionText.style.opacity = '0';
-        setTimeout(triggerGrandClimax, 200); 
+        // Go to Dialogue Transition instead of snapping to climax
+        setTimeout(playDialogue, 400); 
     }
 });
 
-// --- 4. Grand Climax ---
+// --- 4. Dialogue Transition ---
+const messages = [
+    "From all the stars in our sky...",
+    "And all the memories we've made...",
+    "There is only one thing left to say."
+];
+
+function playDialogue() {
+    // Fade out the map layer
+    constellationLayer.style.opacity = '0';
+    
+    setTimeout(() => {
+        constellationLayer.style.display = 'none';
+        
+        // Show the dark, starry dialogue background
+        dialogueLayer.classList.remove('hidden');
+        dialogueLayer.style.opacity = '1';
+        
+        let i = 0;
+        function showNextMessage() {
+            if (i < messages.length) {
+                dialogueText.innerText = messages[i];
+                dialogueText.classList.add('show');
+                
+                // Keep the text on screen for 2.5 seconds before fading out
+                setTimeout(() => {
+                    dialogueText.classList.remove('show');
+                    i++;
+                    setTimeout(showNextMessage, 1000); // Wait 1s before showing next line
+                }, 2500); 
+            } else {
+                // Done with messages, move to Grand Climax
+                dialogueLayer.style.opacity = '0';
+                setTimeout(() => {
+                    dialogueLayer.style.display = 'none';
+                    triggerGrandClimax();
+                }, 1000);
+            }
+        }
+        showNextMessage();
+    }, 600);
+}
+
+// --- 5. Grand Climax ---
 function triggerGrandClimax() {
     if(bgMusic) {
         let vol = 0.2;
         let fade = setInterval(() => { vol += 0.05; if(vol >= 1) { clearInterval(fade); vol = 1; } bgMusic.volume = vol; }, 150);
     }
     
-    // Fade out map rapidly
-    constellationLayer.style.opacity = '0';
-    
-    // Bloom the Bright Golden Sunflower Background instantly!
+    // Bloom the vibrant sunflower background
     bgSunflower.style.opacity = '1';
 
-    // Bring in finale instantly instead of waiting
     setTimeout(() => {
-        constellationLayer.style.display = 'none';
         climaxLayer.classList.remove('hidden');
-        surpriseBanner.classList.remove('hidden');
-        setTimeout(() => surpriseBanner.classList.add('drop'), 100);
+        partyBanner.classList.remove('hidden');
+        setTimeout(() => partyBanner.classList.add('drop'), 100);
         fireMassiveConfetti();
-    }, 400); // Super fast transition
+    }, 400); 
 }
 
 function fireMassiveConfetti() {
     const end = Date.now() + 1500; 
-    const colors = ['#FFD700', '#FF8C00', '#FF00de', '#ffffff']; // Added orange for sunflower theme
+    const colors = ['#00BFFF', '#ff0080', '#8A2BE2', '#32CD32']; 
     (function frame() {
         confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0, y: 0.8 }, colors: colors, zIndex: 9999 });
         confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1, y: 0.8 }, colors: colors, zIndex: 9999 });

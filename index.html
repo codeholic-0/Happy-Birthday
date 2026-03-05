@@ -84,16 +84,35 @@
         </div>
     </div>
 
+    <div id="dialogue-layer" class="hidden">
+        <p class="dialogue-text" id="dialogue-text"></p>
+    </div>
+
     <div id="climax-layer" class="hidden">
-        <div class="surprise-banner hidden">🎉 SURPRISE! 🎉</div>
-        <div class="center-stage glass-panel">
+        
+        <div class="party-banner hidden" id="party-banner">
+            <div class="banner-row row-top">
+                <div class="banner-string"></div>
+                <div class="flags-container">
+                    <div class="flag-wrapper"><div class="banner-word" style="background:#ff0080;">HAPPY</div></div>
+                </div>
+            </div>
             
+            <div class="banner-row row-bottom">
+                <div class="banner-string"></div>
+                <div class="flags-container">
+                    <div class="flag-wrapper"><div class="banner-word" style="background:#00BFFF;">BIRTHDAY</div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="center-stage glass-panel">
             <div class="sunflower sf-tl">🌻</div>
             <div class="sunflower sf-tr">🌻</div>
             <div class="sunflower sf-bl">🌻</div>
             <div class="sunflower sf-br">🌻</div>
 
-            <h1 class="glow-title">HAPPY BIRTHDAY<br><span id="friendName">ALEX</span></h1>
+            <h1 class="glow-title"><span id="friendName">ALEX</span></h1>
             <p class="subtitle">You are my sunshine ✨</p>
             
             <div class="final-photo-frame">
