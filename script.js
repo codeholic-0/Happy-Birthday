@@ -100,6 +100,7 @@ function setupStarFormation() {
     innerRadius = outerRadius * 0.382; // The mathematically perfect inner ratio for a 5-point star
     
     cx = window.innerWidth / 2;
+<<<<<<< HEAD
     cy = window.innerHeight * 0.50; 
 
     const coreNode = document.querySelector('.star-node[data-index="0"]');
@@ -107,7 +108,18 @@ function setupStarFormation() {
         coreNode.style.left = `${cx}px`;
         coreNode.style.top = `${cy}px`;
     }
+=======
+    cy = window.innerHeight * 0.50; // Dead center of the screen vertically and horizontally
+>>>>>>> e7f38c35dd5270af40041aad8b3c779e150887e0
 
+    // Lock the core star EXACTLY to the dead center
+    const coreNode = document.querySelector('.star-node[data-index="0"]');
+    if(coreNode) {
+        coreNode.style.left = `${cx}px`;
+        coreNode.style.top = `${cy}px`;
+    }
+
+    // Place outer stars perfectly using pixels instead of percentages
     for(let i = 1; i <= 5; i++) {
         const node = document.querySelector(`.star-node[data-index="${i}"]`);
         const angle = -Math.PI / 2 + ((i - 1) * (2 * Math.PI / 5));
@@ -251,6 +263,10 @@ photoOverlay.addEventListener('click', () => {
         }, 800); 
     }
     
+<<<<<<< HEAD
+=======
+    // THE TRUE STAR OUTLINE FIX
+>>>>>>> e7f38c35dd5270af40041aad8b3c779e150887e0
     if(unlockedCount === 6) { 
         instructionText.style.opacity = '0'; 
         
@@ -258,18 +274,32 @@ photoOverlay.addEventListener('click', () => {
         svgCanvas.innerHTML = ''; 
         
         let points = [];
+        
+        // Use pure math to draw lines so it never misaligns with the pulsing HTML elements
         for(let i = 0; i < 5; i++) {
+<<<<<<< HEAD
+=======
+            // 1. Calculate Exact Outer Point
+>>>>>>> e7f38c35dd5270af40041aad8b3c779e150887e0
             let angleOuter = -Math.PI / 2 + (i * (2 * Math.PI / 5));
             let ox = cx + outerRadius * Math.cos(angleOuter);
             let oy = cy + outerRadius * Math.sin(angleOuter);
             points.push({x: ox, y: oy});
 
+<<<<<<< HEAD
+=======
+            // 2. Calculate Exact Inner Valley
+>>>>>>> e7f38c35dd5270af40041aad8b3c779e150887e0
             let angleInner = -Math.PI / 2 + (i * (2 * Math.PI / 5)) + (Math.PI / 5);
             let ix = cx + innerRadius * Math.cos(angleInner);
             let iy = cy + innerRadius * Math.sin(angleInner);
             points.push({x: ix, y: iy});
         }
         
+<<<<<<< HEAD
+=======
+        // Draw the 10 lines
+>>>>>>> e7f38c35dd5270af40041aad8b3c779e150887e0
         points.forEach((p1, index) => {
             let p2 = points[(index + 1) % points.length];
             
@@ -293,7 +323,7 @@ photoOverlay.addEventListener('click', () => {
 
 // --- 5. Dialogue Transition ---
 const messages = [
-    "From my random thought this afternoon...",
+    "From my random thought at the afternoon...",
     "And the 2hrs I have spent on this...",
     "There is only one thing left to say..."
 ];
