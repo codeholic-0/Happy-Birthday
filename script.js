@@ -24,6 +24,34 @@ const photoOverlay = document.getElementById('photo-overlay');
 const overlayImg = document.getElementById('overlay-img');
 const overlayCaption = document.getElementById('overlay-caption');
 
+// --- BACK BUTTON / SWIPE TRAP (4TH PHASE) ---
+// Pushes a state immediately so we can intercept the user going back
+history.pushState(null, null, location.href);
+window.addEventListener('popstate', function(event) {
+    // Push it back again to prevent them from actually leaving the page
+    history.pushState(null, null, location.href); 
+    showOutroLayer();
+});
+
+function showOutroLayer() {
+    // Hide all other active layers abruptly
+    introLayer.style.display = 'none';
+    constellationLayer.style.display = 'none';
+    dialogueLayer.style.display = 'none';
+    climaxLayer.style.display = 'none';
+    
+    // Show the "See you next year" layer
+    const outroLayer = document.getElementById('outro-layer');
+    if(outroLayer) {
+        outroLayer.classList.remove('hidden');
+        outroLayer.style.display = 'flex';
+        // Small timeout allows display: flex to apply before transitioning opacity
+        setTimeout(() => {
+            outroLayer.style.opacity = '1';
+        }, 50);
+    }
+}
+
 // --- 0. Stardust Canvas ---
 const canvas = document.getElementById('stardust-canvas');
 const ctx = canvas.getContext('2d');
@@ -63,23 +91,32 @@ function handleTrail(x, y) {
 window.addEventListener('mousemove', (e) => handleTrail(e.clientX, e.clientY));
 window.addEventListener('touchmove', (e) => handleTrail(e.touches[0].clientX, e.touches[0].clientY));
 
-// --- 1. Geometric Star Formation ---
+// --- 1. PERFECT GEOMETRIC STAR FORMATION ---
+let cx, cy, outerRadius, innerRadius;
+
 function setupStarFormation() {
     const minDim = Math.min(window.innerWidth, window.innerHeight);
-    const radius = minDim * 0.37; // Spread stars out wider
+    outerRadius = minDim * 0.38; 
+    innerRadius = outerRadius * 0.382; // The mathematically perfect inner ratio for a 5-point star
     
-    const cx = window.innerWidth / 2;
-    const cy = window.innerHeight * 0.55; 
+    cx = window.innerWidth / 2;
+    cy = window.innerHeight * 0.50; 
+
+    const coreNode = document.querySelector('.star-node[data-index="0"]');
+    if(coreNode) {
+        coreNode.style.left = `${cx}px`;
+        coreNode.style.top = `${cy}px`;
+    }
 
     for(let i = 1; i <= 5; i++) {
         const node = document.querySelector(`.star-node[data-index="${i}"]`);
         const angle = -Math.PI / 2 + ((i - 1) * (2 * Math.PI / 5));
         
-        const leftPx = cx + (radius * Math.cos(angle));
-        const topPx = cy + (radius * Math.sin(angle));
+        const leftPx = cx + (outerRadius * Math.cos(angle));
+        const topPx = cy + (outerRadius * Math.sin(angle));
         
-        node.style.left = `${(leftPx / window.innerWidth) * 100}%`;
-        node.style.top = `${(topPx / window.innerHeight) * 100}%`;
+        node.style.left = `${leftPx}px`;
+        node.style.top = `${topPx}px`;
     }
 }
 setupStarFormation(); 
@@ -172,13 +209,11 @@ function playIntroDialogue() {
     }, 300);
 }
 
-// --- 4. Constellation Phase (Sequential Star Logic) ---
+// --- 4. Constellation Phase ---
 let unlockedCount = 0; let currentViewingNode = null; 
 
 function startConstellationPhase() {
     constellationLayer.classList.remove('hidden'); 
-    
-    // Only reveal Star #1 to start the sequence
     const firstStar = document.querySelector('.star-node[data-index="1"]');
     if (firstStar) firstStar.classList.add('visible-star');
 }
@@ -216,34 +251,25 @@ photoOverlay.addEventListener('click', () => {
         }, 800); 
     }
     
-    // THE TRUE STAR OUTLINE
     if(unlockedCount === 6) { 
         instructionText.style.opacity = '0'; 
         
         const svgCanvas = document.getElementById('constellation-lines');
         svgCanvas.innerHTML = ''; 
         
-        const minDim = Math.min(window.innerWidth, window.innerHeight);
-        const outerRadius = minDim * 0.37;
-        const innerRadius = outerRadius * 0.45; // Depth of the star valleys
-        const cx = window.innerWidth / 2;
-        const cy = window.innerHeight * 0.55;
-        
         let points = [];
         for(let i = 0; i < 5; i++) {
-            // 1. Get exact position of the HTML Star Node (Outer Point)
-            const node = document.querySelector(`.star-node[data-index="${i+1}"]`);
-            const rect = node.getBoundingClientRect();
-            points.push({x: rect.left + rect.width/2, y: rect.top + rect.height/2});
+            let angleOuter = -Math.PI / 2 + (i * (2 * Math.PI / 5));
+            let ox = cx + outerRadius * Math.cos(angleOuter);
+            let oy = cy + outerRadius * Math.sin(angleOuter);
+            points.push({x: ox, y: oy});
 
-            // 2. Calculate the invisible valley (Inner Point)
             let angleInner = -Math.PI / 2 + (i * (2 * Math.PI / 5)) + (Math.PI / 5);
             let ix = cx + innerRadius * Math.cos(angleInner);
             let iy = cy + innerRadius * Math.sin(angleInner);
             points.push({x: ix, y: iy});
         }
         
-        // Draw the 10 lines of the perfect perimeter star
         points.forEach((p1, index) => {
             let p2 = points[(index + 1) % points.length];
             
@@ -255,7 +281,6 @@ photoOverlay.addEventListener('click', () => {
             line.classList.add('constellation-line'); 
             svgCanvas.appendChild(line);
             
-            // Pop them in sequentially
             setTimeout(() => line.classList.add('drawn'), index * 100);
         });
 
