@@ -1,4 +1,4 @@
-const friendName = "Emily"; // CHANGE THIS!
+const friendName = "Sreshtha"; // CHANGE THIS!
 
 const nameSpan = document.getElementById('friendName');
 nameSpan.innerText = friendName.toUpperCase();
@@ -9,7 +9,7 @@ const giftText = document.querySelector('.gift-text');
 const bgMusic = document.getElementById('bg-music');
 
 const bgTwilight = document.getElementById('bg-twilight');
-const bgClimaxDark = document.getElementById('bg-climax-dark');
+const bgClimaxSunset = document.getElementById('bg-climax-sunset');
 
 const constellationLayer = document.getElementById('constellation-layer');
 const dialogueLayer = document.getElementById('dialogue-layer');
@@ -54,7 +54,6 @@ function animateParticles() {
 }
 animateParticles();
 
-// Throttled particle generation to prevent browser lag
 let lastParticleTime = 0;
 function handleTrail(x, y) {
     if (Date.now() - lastParticleTime > 50) { 
@@ -66,10 +65,10 @@ window.addEventListener('mousemove', (e) => handleTrail(e.clientX, e.clientY));
 window.addEventListener('touchmove', (e) => handleTrail(e.touches[0].clientX, e.touches[0].clientY));
 
 
-// --- 1. Geometric Star Formation (Perfect Circle Logic) ---
+// --- 1. Geometric Star Formation ---
 function setupStarFormation() {
     const minDim = Math.min(window.innerWidth, window.innerHeight);
-    const radius = minDim * 0.32; 
+    const radius = minDim * 0.37; // Spread stars out wider
     
     const cx = window.innerWidth / 2;
     const cy = window.innerHeight * 0.55; 
@@ -95,9 +94,9 @@ window.addEventListener('resize', () => {
     }
 });
 
-// --- 2. Box Chase Logic (Corners Focus) ---
+// --- 2. Box Chase Logic ---
 let taps = 0; const maxTaps = 5;
-let introStarted = false; // Safety lock against double-tapping
+let introStarted = false; 
 
 giftBox.addEventListener('click', (e) => {
     e.preventDefault(); 
@@ -106,7 +105,6 @@ giftBox.addEventListener('click', (e) => {
     taps++;
     
     if (taps < maxTaps - 1) {
-        // Define corners with padding
         const padding = 80;
         const boxWidth = 100;
         const w = window.innerWidth;
@@ -123,7 +121,6 @@ giftBox.addEventListener('click', (e) => {
 
         giftBox.style.left = `${corner.x}px`; 
         giftBox.style.top = `${corner.y}px`;
-        // Explicitly maintain the transform so the coordinate math isn't thrown off
         giftBox.style.transform = 'translate(-50%, -50%)'; 
         
         giftText.innerText = ["Catch me!", "Nope, here!", "So slow! 😜", "Almost..."][taps - 1] || "";
@@ -173,12 +170,17 @@ function playIntroDialogue() {
     }, 300);
 }
 
-// --- 4. Constellation Phase ---
+// --- 4. Constellation Phase (Sequential Star Logic) ---
 let unlockedCount = 0; let linesData = []; let currentViewingNode = null; 
 const nodeConnections = [[1,3], [3,5], [5,2], [2,4], [4,1]];
 
 function startConstellationPhase() {
     constellationLayer.classList.remove('hidden'); 
+    
+    // Only reveal Star #1 to start the sequence
+    const firstStar = document.querySelector('.star-node[data-index="1"]');
+    if (firstStar) firstStar.classList.add('visible-star');
+    
     drawConstellationLines();
 }
 
@@ -195,10 +197,6 @@ function drawConstellationLines() {
         line.setAttribute('x2', rect2.left + rect2.width/2); line.setAttribute('y2', rect2.top + rect2.height/2);
         line.classList.add('constellation-line'); 
         
-        if (nodeA.classList.contains('unlocked') && nodeB.classList.contains('unlocked')) { 
-            line.classList.add('drawn'); 
-        }
-        
         svgCanvas.appendChild(line);
         linesData.push({ element: line, nodeA: pair[0], nodeB: pair[1] });
     });
@@ -214,11 +212,17 @@ starNodes.forEach(node => {
 
 photoOverlay.addEventListener('click', () => {
     if (!currentViewingNode) return;
-    photoOverlay.classList.remove('active'); const node = currentViewingNode; currentViewingNode = null; 
+    photoOverlay.classList.remove('active'); 
+    const node = currentViewingNode; 
+    currentViewingNode = null; 
+    
     node.classList.add('unlocked');
-    const rect = node.getBoundingClientRect(); for(let i=0; i<40; i++) createParticle(rect.left + rect.width/2, rect.top + rect.height/2);
+    const rect = node.getBoundingClientRect(); 
+    for(let i=0; i<40; i++) createParticle(rect.left + rect.width/2, rect.top + rect.height/2);
+    
     unlockedCount++;
 
+    // Draw lines between unlocked stars
     linesData.forEach(lineObj => {
         if (document.querySelector(`.star-node[data-index="${lineObj.nodeA}"]`).classList.contains('unlocked') && 
             document.querySelector(`.star-node[data-index="${lineObj.nodeB}"]`).classList.contains('unlocked')) { 
@@ -226,15 +230,22 @@ photoOverlay.addEventListener('click', () => {
         }
     });
 
-    if (unlockedCount === 5) {
+    // Sequential Reveal Logic: Pop in the next star
+    if (unlockedCount < 5) {
+        const nextStar = document.querySelector(`.star-node[data-index="${unlockedCount + 1}"]`);
+        if (nextStar) nextStar.classList.add('visible-star');
+    } 
+    // Show the Core Star when 5 are done
+    else if (unlockedCount === 5) {
         setTimeout(() => {
             const cStar = document.querySelector('.star-node[data-index="0"]');
             cStar.classList.remove('hidden-core'); cStar.classList.add('reveal-core');
             instructionText.innerText = "The core is ready...";
             const cRect = cStar.getBoundingClientRect(); for(let i=0; i<40; i++) createParticle(cRect.left + cRect.width/2, cRect.top + cRect.height/2);
-        }, 1000); 
+        }, 800); 
     }
     
+    // Core is tapped -> Start Climax Transition
     if(unlockedCount === 6) { 
         instructionText.style.opacity = '0'; 
         
@@ -247,9 +258,9 @@ photoOverlay.addEventListener('click', () => {
 
 // --- 5. Dialogue Transition ---
 const messages = [
-    "From all the stars in the sky...",
-    "And all the memories we've made...",
-    "There is only one thing left to say."
+    "From my random thought at the afternoon...",
+    "And the 2hrs I have spent on this...",
+    "There is only one thing left to say..."
 ];
 
 function playDialogue() {
@@ -288,7 +299,7 @@ function playDialogue() {
 // --- 6. Grand Climax ---
 function triggerGrandClimax() {
     if(bgMusic) { let vol = 0.2; let fade = setInterval(() => { vol += 0.05; if(vol >= 1) { clearInterval(fade); vol = 1; } bgMusic.volume = vol; }, 150); }
-    bgClimaxDark.style.opacity = '1';
+    bgClimaxSunset.style.opacity = '1';
     
     setTimeout(() => {
         climaxLayer.classList.remove('hidden'); 
