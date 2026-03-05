@@ -63,23 +63,34 @@ function handleTrail(x, y) {
 window.addEventListener('mousemove', (e) => handleTrail(e.clientX, e.clientY));
 window.addEventListener('touchmove', (e) => handleTrail(e.touches[0].clientX, e.touches[0].clientY));
 
-// --- 1. Geometric Star Formation ---
+// --- 1. PERFECT GEOMETRIC STAR FORMATION ---
+let cx, cy, outerRadius, innerRadius;
+
 function setupStarFormation() {
     const minDim = Math.min(window.innerWidth, window.innerHeight);
-    const radius = minDim * 0.37; // Spread stars out wider
+    outerRadius = minDim * 0.38; 
+    innerRadius = outerRadius * 0.382; // The mathematically perfect inner ratio for a 5-point star
     
-    const cx = window.innerWidth / 2;
-    const cy = window.innerHeight * 0.55; 
+    cx = window.innerWidth / 2;
+    cy = window.innerHeight * 0.50; // Dead center of the screen vertically and horizontally
 
+    // Lock the core star EXACTLY to the dead center
+    const coreNode = document.querySelector('.star-node[data-index="0"]');
+    if(coreNode) {
+        coreNode.style.left = `${cx}px`;
+        coreNode.style.top = `${cy}px`;
+    }
+
+    // Place outer stars perfectly using pixels instead of percentages
     for(let i = 1; i <= 5; i++) {
         const node = document.querySelector(`.star-node[data-index="${i}"]`);
         const angle = -Math.PI / 2 + ((i - 1) * (2 * Math.PI / 5));
         
-        const leftPx = cx + (radius * Math.cos(angle));
-        const topPx = cy + (radius * Math.sin(angle));
+        const leftPx = cx + (outerRadius * Math.cos(angle));
+        const topPx = cy + (outerRadius * Math.sin(angle));
         
-        node.style.left = `${(leftPx / window.innerWidth) * 100}%`;
-        node.style.top = `${(topPx / window.innerHeight) * 100}%`;
+        node.style.left = `${leftPx}px`;
+        node.style.top = `${topPx}px`;
     }
 }
 setupStarFormation(); 
@@ -216,34 +227,31 @@ photoOverlay.addEventListener('click', () => {
         }, 800); 
     }
     
-    // THE TRUE STAR OUTLINE
+    // THE TRUE STAR OUTLINE FIX
     if(unlockedCount === 6) { 
         instructionText.style.opacity = '0'; 
         
         const svgCanvas = document.getElementById('constellation-lines');
         svgCanvas.innerHTML = ''; 
         
-        const minDim = Math.min(window.innerWidth, window.innerHeight);
-        const outerRadius = minDim * 0.37;
-        const innerRadius = outerRadius * 0.45; // Depth of the star valleys
-        const cx = window.innerWidth / 2;
-        const cy = window.innerHeight * 0.55;
-        
         let points = [];
+        
+        // Use pure math to draw lines so it never misaligns with the pulsing HTML elements
         for(let i = 0; i < 5; i++) {
-            // 1. Get exact position of the HTML Star Node (Outer Point)
-            const node = document.querySelector(`.star-node[data-index="${i+1}"]`);
-            const rect = node.getBoundingClientRect();
-            points.push({x: rect.left + rect.width/2, y: rect.top + rect.height/2});
+            // 1. Calculate Exact Outer Point
+            let angleOuter = -Math.PI / 2 + (i * (2 * Math.PI / 5));
+            let ox = cx + outerRadius * Math.cos(angleOuter);
+            let oy = cy + outerRadius * Math.sin(angleOuter);
+            points.push({x: ox, y: oy});
 
-            // 2. Calculate the invisible valley (Inner Point)
+            // 2. Calculate Exact Inner Valley
             let angleInner = -Math.PI / 2 + (i * (2 * Math.PI / 5)) + (Math.PI / 5);
             let ix = cx + innerRadius * Math.cos(angleInner);
             let iy = cy + innerRadius * Math.sin(angleInner);
             points.push({x: ix, y: iy});
         }
         
-        // Draw the 10 lines of the perfect perimeter star
+        // Draw the 10 lines
         points.forEach((p1, index) => {
             let p2 = points[(index + 1) % points.length];
             
@@ -268,7 +276,7 @@ photoOverlay.addEventListener('click', () => {
 
 // --- 5. Dialogue Transition ---
 const messages = [
-    "From my random thought this afternoon...",
+    "From my random thought at the afternoon...",
     "And the 2hrs I have spent on this...",
     "There is only one thing left to say..."
 ];
