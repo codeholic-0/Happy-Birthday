@@ -10,9 +10,7 @@
 </head>
 <body>
 
-    <audio id="bg-music" loop>
-        <source src="song.mp3" type="audio/mpeg">
-    </audio>
+    <audio id="bg-music" loop><source src="song.mp3" type="audio/mpeg"></audio>
 
     <div class="bg-layer bg-sunset"></div>
     <div class="bg-layer bg-twilight" id="bg-twilight"></div>
@@ -21,7 +19,7 @@
     <canvas id="stardust-canvas"></canvas>
 
     <div id="intro-layer">
-        <div id="gift-box-container">
+        <div id="gift-box-container" style="left: 50%; top: 50%; transform: translate(-50%, -50%);">
             <div class="gift-bounce">🎁</div>
             <p class="gift-text">Tap to open...</p>
         </div>
@@ -29,7 +27,6 @@
 
     <div id="constellation-layer" class="hidden">
         <p class="instruction-text">Tap the stars to uncover the memories...</p>
-        
         <svg id="constellation-lines"></svg>
 
         <div class="star-node center-node hidden-core" style="top: 50%; left: 50%;" data-index="0">
@@ -42,45 +39,27 @@
 
         <div class="star-node" data-index="1">
             <div class="glowing-star"></div>
-            <div class="polaroid" style="--rot: -5deg;">
-                <img src="https://picsum.photos/id/1015/300/300" alt="Memory 1">
-                <p class="caption">New Beginnings</p>
-            </div>
+            <div class="polaroid" style="--rot: -5deg;"><img src="https://picsum.photos/id/1015/300/300" alt="Memory 1"><p class="caption">New Beginnings</p></div>
         </div>
         <div class="star-node" data-index="2">
             <div class="glowing-star"></div>
-            <div class="polaroid" style="--rot: 6deg;">
-                <img src="https://picsum.photos/id/1025/300/300" alt="Memory 2">
-                <p class="caption">Unforgettable</p>
-            </div>
+            <div class="polaroid" style="--rot: 6deg;"><img src="https://picsum.photos/id/1025/300/300" alt="Memory 2"><p class="caption">Unforgettable</p></div>
         </div>
         <div class="star-node" data-index="3">
             <div class="glowing-star"></div>
-            <div class="polaroid" style="--rot: -4deg;">
-                <img src="https://picsum.photos/id/1074/300/300" alt="Memory 3">
-                <p class="caption">Always Smiling</p>
-            </div>
+            <div class="polaroid" style="--rot: -4deg;"><img src="https://picsum.photos/id/1074/300/300" alt="Memory 3"><p class="caption">Always Smiling</p></div>
         </div>
         <div class="star-node" data-index="4">
             <div class="glowing-star"></div>
-            <div class="polaroid" style="--rot: 5deg;">
-                <img src="https://picsum.photos/id/237/300/300" alt="Memory 4">
-                <p class="caption">Best Friends</p>
-            </div>
+            <div class="polaroid" style="--rot: 5deg;"><img src="https://picsum.photos/id/237/300/300" alt="Memory 4"><p class="caption">Best Friends</p></div>
         </div>
         <div class="star-node" data-index="5">
             <div class="glowing-star"></div>
-            <div class="polaroid" style="--rot: -8deg;">
-                <img src="https://picsum.photos/id/1062/300/300" alt="Memory 5">
-                <p class="caption">Wild Adventures</p>
-            </div>
+            <div class="polaroid" style="--rot: -8deg;"><img src="https://picsum.photos/id/1062/300/300" alt="Memory 5"><p class="caption">Wild Adventures</p></div>
         </div>
         <div class="star-node" data-index="6">
             <div class="glowing-star"></div>
-            <div class="polaroid" style="--rot: 3deg;">
-                <img src="https://picsum.photos/id/1005/300/300" alt="Memory 6">
-                <p class="caption">Late Nights</p>
-            </div>
+            <div class="polaroid" style="--rot: 3deg;"><img src="https://picsum.photos/id/1005/300/300" alt="Memory 6"><p class="caption">Late Nights</p></div>
         </div>
     </div>
 
@@ -94,16 +73,35 @@
             <div class="banner-row row-top">
                 <div class="banner-string"></div>
                 <div class="flags-container">
-                    <div class="flag-wrapper"><div class="banner-word" style="background:#ff0080;">HAPPY</div></div>
+                    <div class="flag-wrapper t-1"><div class="banner-letter" style="background:#ff0080;">H</div></div>
+                    <div class="flag-wrapper t-2"><div class="banner-letter" style="background:#ff0080;">A</div></div>
+                    <div class="flag-wrapper t-3"><div class="banner-letter" style="background:#ff0080;">P</div></div>
+                    <div class="flag-wrapper t-4"><div class="banner-letter" style="background:#ff0080;">P</div></div>
+                    <div class="flag-wrapper t-5"><div class="banner-letter" style="background:#ff0080;">Y</div></div>
                 </div>
             </div>
             
             <div class="banner-row row-bottom">
                 <div class="banner-string"></div>
                 <div class="flags-container">
-                    <div class="flag-wrapper"><div class="banner-word" style="background:#00BFFF;">BIRTHDAY</div></div>
+                    <div class="flag-wrapper b-1"><div class="banner-letter" style="background:#00BFFF;">B</div></div>
+                    <div class="flag-wrapper b-2"><div class="banner-letter" style="background:#00BFFF;">I</div></div>
+                    <div class="flag-wrapper b-3"><div class="banner-letter" style="background:#00BFFF;">R</div></div>
+                    <div class="flag-wrapper b-4"><div class="banner-letter" style="background:#00BFFF;">T</div></div>
+                    <div class="flag-wrapper b-5"><div class="banner-letter" style="background:#00BFFF;">H</div></div>
+                    <div class="flag-wrapper b-6"><div class="banner-letter" style="background:#00BFFF;">D</div></div>
+                    <div class="flag-wrapper b-7"><div class="banner-letter" style="background:#00BFFF;">A</div></div>
+                    <div class="flag-wrapper b-8"><div class="banner-letter" style="background:#00BFFF;">Y</div></div>
                 </div>
             </div>
+        </div>
+
+        <div class="festive-decorations">
+            <div class="balloon bal-1">🎈</div>
+            <div class="balloon bal-2">🎈</div>
+            <div class="sparkle sp-1">✨</div>
+            <div class="sparkle sp-2">✨</div>
+            <div class="sparkle sp-3">✨</div>
         </div>
 
         <div class="center-stage glass-panel">
@@ -119,8 +117,10 @@
                 <img src="https://picsum.photos/id/103/400/400" alt="Our Favorite Moment">
                 <div class="frame-tape"></div>
             </div>
-            <div class="cake-display">🎂</div>
+            <div class="cake-display">🕯️ 🎂 🕯️</div>
         </div>
+
+        <p class="signature">Made with 💖 by XYZ</p>
     </div>
 
     <div id="photo-overlay">

@@ -1,16 +1,9 @@
-:root {
-    --glass-light: rgba(255, 255, 255, 0.4); 
-    --glass-border: rgba(255, 255, 255, 0.7);
-    --star-gold: #FFD700;
-}
-
+:root { --glass-light: rgba(255, 255, 255, 0.4); --glass-border: rgba(255, 255, 255, 0.7); --star-gold: #FFD700; }
 * { box-sizing: border-box; }
 
 body {
-    margin: 0; height: 100vh; overflow: hidden; 
-    font-family: 'Fredoka', sans-serif; color: white;
-    -webkit-tap-highlight-color: transparent;
-    perspective: 1000px; background-color: #ffbba6; 
+    margin: 0; height: 100vh; overflow: hidden; font-family: 'Fredoka', sans-serif; color: white;
+    -webkit-tap-highlight-color: transparent; perspective: 1000px; background-color: #ffbba6; 
 }
 
 /* Backgrounds */
@@ -22,8 +15,8 @@ body {
 #stardust-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999; }
 
 /* Intro Layer */
-#intro-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 200; display: flex; justify-content: center; align-items: center; transition: opacity 1s ease-out; }
-#gift-box-container { text-align: center; cursor: pointer; position: absolute; padding: 30px; transition: top 0.4s ease, left 0.4s ease; }
+#intro-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 200; display: block; transition: opacity 1s ease-out; }
+#gift-box-container { text-align: center; cursor: pointer; position: absolute; padding: 30px; transition: top 0.2s ease-out, left 0.2s ease-out; }
 .gift-bounce { font-size: 5rem; filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.6)); animation: pulseGift 2s infinite; }
 .gift-text { font-family: 'Dancing Script', cursive; font-size: 1.5rem; color: #fff; margin-top: 10px; pointer-events: none; text-shadow: 0 2px 4px rgba(0,0,0,0.3);}
 @keyframes pulseGift { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.9)); } }
@@ -32,11 +25,7 @@ body {
 #constellation-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 50; transition: opacity 0.6s ease; }
 #constellation-layer.hidden, #climax-layer.hidden { opacity: 0; pointer-events: none; visibility: hidden; }
 
-.instruction-text {
-    position: absolute; top: 5%; left: 50%; transform: translateX(-50%); width: 100%; text-align: center;
-    font-family: 'Dancing Script', cursive; font-size: 1.5rem; color: var(--star-gold); text-shadow: 0 0 10px rgba(0,0,0,0.5);
-    transition: opacity 0.5s ease; animation: floatText 3s infinite alternate;
-}
+.instruction-text { position: absolute; top: 5%; left: 50%; transform: translateX(-50%); width: 100%; text-align: center; font-family: 'Dancing Script', cursive; font-size: 1.5rem; color: var(--star-gold); text-shadow: 0 0 10px rgba(0,0,0,0.5); transition: opacity 0.5s ease; animation: floatText 3s infinite alternate; }
 @keyframes floatText { from { opacity: 0.8; transform: translate(-50%, 0); } to { opacity: 1; transform: translate(-50%, -5px); } }
 
 /* SVG Lines & Stars */
@@ -48,20 +37,12 @@ body {
 .star-node.hidden-core { opacity: 0; pointer-events: none; transform: translate(-50%, -50%) scale(0); transition: opacity 1s ease, transform 1s cubic-bezier(0.34, 1.56, 0.64, 1); }
 .star-node.reveal-core { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%) scale(1); }
 
-.glowing-star {
-    width: 18px; height: 18px; background-color: white; border-radius: 50%; cursor: pointer;
-    box-shadow: 0 0 15px 5px rgba(255, 215, 0, 0.8), 0 0 30px 10px rgba(255, 255, 255, 0.4);
-    transition: transform 0.3s ease, opacity 0.5s ease; animation: starPulse 2s infinite alternate;
-}
+.glowing-star { width: 18px; height: 18px; background-color: white; border-radius: 50%; cursor: pointer; box-shadow: 0 0 15px 5px rgba(255, 215, 0, 0.8), 0 0 30px 10px rgba(255, 255, 255, 0.4); transition: transform 0.3s ease, opacity 0.5s ease; animation: starPulse 2s infinite alternate; }
 .star-node:hover .glowing-star { transform: scale(1.5); }
 @keyframes starPulse { from { transform: scale(1); opacity: 0.8; } to { transform: scale(1.2); opacity: 1; } }
 
 /* Polaroids */
-.polaroid {
-    position: absolute; background: #fff; padding: 8px 8px 35px 8px; width: 160px; 
-    box-shadow: 0 10px 20px rgba(0,0,0,0.4); color: #333; pointer-events: none; opacity: 0;
-    transform: scale(0) rotate(0deg); transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease;
-}
+.polaroid { position: absolute; background: #fff; padding: 8px 8px 35px 8px; width: 160px; box-shadow: 0 10px 20px rgba(0,0,0,0.4); color: #333; pointer-events: none; opacity: 0; transform: scale(0) rotate(0deg); transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease; }
 .star-node.unlocked .glowing-star { opacity: 0; pointer-events: none; }
 .star-node.unlocked { z-index: 20; } 
 .star-node.unlocked .polaroid { opacity: 1; pointer-events: auto; transform: scale(0.4) rotate(var(--rot)); }
@@ -76,72 +57,62 @@ body {
 .overlay-polaroid img { width: 100%; height: auto; border: 1px solid #ccc; display: block; }
 .overlay-polaroid .caption { font-family: 'Dancing Script', cursive; font-size: 1.6rem; margin-top: 15px; text-align: center; color: #333;}
 
-/* --- DIALOGUE TRANSITION LAYER --- */
-#dialogue-layer {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    z-index: 400; display: flex; justify-content: center; align-items: center;
-    background: radial-gradient(circle at center, rgba(30, 0, 60, 0.8) 0%, rgba(0, 0, 0, 0.95) 100%);
-    opacity: 0; pointer-events: none; transition: opacity 1s ease;
-}
-.dialogue-text {
-    font-family: 'Dancing Script', cursive; font-size: 2.8rem; color: #fff;
-    text-align: center; padding: 20px; text-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
-    opacity: 0; transform: translateY(20px); transition: opacity 1s ease, transform 1s ease;
-}
+/* Dialogue Layer */
+#dialogue-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 400; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle at center, rgba(30, 0, 60, 0.8) 0%, rgba(0, 0, 0, 0.95) 100%); opacity: 0; pointer-events: none; transition: opacity 0.8s ease; }
+.dialogue-text { font-family: 'Dancing Script', cursive; font-size: 2.8rem; color: #fff; text-align: center; padding: 20px; text-shadow: 0 0 15px rgba(255, 215, 0, 0.6); opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
 .dialogue-text.show { opacity: 1; transform: translateY(0); }
 
-
 /* --- STAGE 3: CLIMAX LAYER --- */
-#climax-layer {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    z-index: 500; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px;
-}
+#climax-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 500; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
 
-/* Dual Banner Layout */
-.party-banner {
-    position: absolute; top: -150px; left: 0; width: 100%; text-align: center; z-index: 600;
-    transition: top 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
+/* Letter-by-Letter Deep Droop Banner */
+.party-banner { position: absolute; top: -180px; left: 0; width: 100%; text-align: center; z-index: 600; transition: top 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
 .party-banner.drop { top: 0; }
+.banner-row { position: relative; height: 75px; margin-bottom: 5px; }
 
-.banner-row { position: relative; margin-bottom: 5px; height: 60px; }
+/* Deeper strings */
+.row-top .banner-string { position: absolute; top: 10px; left: 25%; width: 50%; height: 60px; border-bottom: 2px solid rgba(255, 255, 255, 0.8); border-radius: 50%; z-index: 1; }
+.row-bottom .banner-string { position: absolute; top: 10px; left: 5%; width: 90%; height: 80px; border-bottom: 2px solid rgba(255, 255, 255, 0.8); border-radius: 50%; z-index: 1; }
 
-/* Top string holds HAPPY, make it slightly narrower so it sits in the middle */
-.row-top .banner-string { 
-    position: absolute; top: 15px; left: 20%; width: 60%; height: 40px;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.8); border-radius: 50%; z-index: 1;
+.flags-container { position: relative; z-index: 2; display: flex; justify-content: center; gap: 4px; padding-top: 15px; }
+.flag-wrapper { filter: drop-shadow(0 8px 8px rgba(0,0,0,0.4)); transform-origin: top center; }
+
+.banner-letter {
+    color: white; padding: 8px 15px 22px 15px; font-family: 'Fredoka', sans-serif; font-size: 1.6rem; font-weight: bold;
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 50% 80%, 0% 100%);
 }
-/* Bottom string holds BIRTHDAY, make it wider */
-.row-bottom .banner-string { 
-    position: absolute; top: 15px; left: 10%; width: 80%; height: 40px;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.8); border-radius: 50%; z-index: 1;
-}
 
-.flags-container { position: relative; z-index: 2; display: flex; justify-content: center; padding-top: 20px; }
-.flag-wrapper { filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5)); transform-origin: top center; animation: flagSway 3s ease-in-out infinite alternate; }
-.banner-word {
-    color: white; padding: 12px 25px 30px 25px; font-family: 'Fredoka', sans-serif; font-size: 1.8rem; font-weight: bold;
-    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 50% 85%, 0% 100%);
-}
-@keyframes flagSway { 0% { transform: rotate(-3deg); } 100% { transform: rotate(3deg); } }
+/* Manually matching the deep droop physics */
+.t-1, .t-5 { transform: translateY(0px) rotate(0deg); animation: gentleBob 3s infinite alternate; }
+.t-2, .t-4 { transform: translateY(18px) rotate(0deg); animation: gentleBob 3s infinite alternate 0.5s; }
+.t-3 { transform: translateY(28px) rotate(0deg); animation: gentleBob 3s infinite alternate 1s; }
 
+.b-1, .b-8 { transform: translateY(0px) rotate(0deg); animation: gentleBob 3s infinite alternate; }
+.b-2, .b-7 { transform: translateY(18px) rotate(0deg); animation: gentleBob 3s infinite alternate 0.3s; }
+.b-3, .b-6 { transform: translateY(32px) rotate(0deg); animation: gentleBob 3s infinite alternate 0.6s; }
+.b-4, .b-5 { transform: translateY(38px) rotate(0deg); animation: gentleBob 3s infinite alternate 0.9s; }
+
+@keyframes gentleBob { 0% { transform: translateY(calc(var(--y, 0px) - 2px)) rotate(-2deg); } 100% { transform: translateY(calc(var(--y, 0px) + 2px)) rotate(2deg); } }
+
+
+/* Festive Decorations */
+.festive-decorations { position: absolute; width: 100%; height: 100%; z-index: 450; pointer-events: none; }
+.balloon { position: absolute; font-size: 5rem; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.3)); animation: floatBalloon 6s ease-in-out infinite alternate; }
+.bal-1 { bottom: 10%; left: 5%; animation-delay: 0s; }
+.bal-2 { top: 30%; right: 5%; font-size: 4rem; animation-delay: -2s; }
+@keyframes floatBalloon { 0% { transform: translateY(0) rotate(-5deg); } 100% { transform: translateY(-40px) rotate(5deg); } }
+
+.sparkle { position: absolute; font-size: 2rem; animation: twinkleDecor 2s infinite alternate; opacity: 0; }
+.sp-1 { top: 20%; left: 20%; animation-delay: 0s; }
+.sp-2 { bottom: 25%; right: 15%; font-size: 3rem; animation-delay: 0.5s; }
+.sp-3 { top: 50%; left: 10%; font-size: 1.5rem; animation-delay: 1s; }
+@keyframes twinkleDecor { 0% { opacity: 0.2; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1.2); } }
 
 /* Frosted Glass */
-.glass-panel {
-    position: relative; margin-top: 100px; /* Pushed down to clear the dual banners */
-    background: var(--glass-light); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-    border: 2px solid var(--glass-border); border-radius: 30px; padding: 30px 20px;
-    text-align: center; box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4); width: 100%; max-width: 450px;
-    transform: scale(0.8) translateY(50px); opacity: 0;
-    transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 1s ease;
-}
+.glass-panel { position: relative; margin-top: 130px; background: var(--glass-light); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 2px solid var(--glass-border); border-radius: 30px; padding: 30px 20px; text-align: center; box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4); width: 100%; max-width: 450px; transform: scale(0.8) translateY(50px); opacity: 0; transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 1s ease; }
 #climax-layer:not(.hidden) .glass-panel { transform: scale(1) translateY(0); opacity: 1; }
 
-/* Sunflowers */
-.sunflower { 
-    position: absolute; font-size: 4rem; filter: drop-shadow(0 15px 15px rgba(0,0,0,0.7));
-    animation: gentleSway 4s ease-in-out infinite alternate; z-index: 10; transform-origin: bottom center;
-}
+.sunflower { position: absolute; font-size: 4rem; filter: drop-shadow(0 15px 15px rgba(0,0,0,0.7)); animation: gentleSway 4s ease-in-out infinite alternate; z-index: 10; transform-origin: bottom center; }
 .sf-tl { top: -30px; left: -30px; }
 .sf-tr { top: -30px; right: -30px; animation-delay: -2s; }
 .sf-bl { bottom: -30px; left: -30px; animation-delay: -1s; }
@@ -155,14 +126,14 @@ body {
 .final-photo-frame img { width: 100%; height: auto; display: block; border: 1px solid #ddd; }
 .frame-tape { position: absolute; top: -15px; left: 50%; transform: translateX(-50%) rotate(-4deg); width: 80px; height: 30px; background: rgba(255, 220, 100, 0.9); border: 1px solid rgba(255, 200, 50, 0.6); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 
-.cake-display { font-size: 4rem; animation: floatCake 3s ease-in-out infinite; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2)); }
+.cake-display { font-size: 3.5rem; animation: floatCake 3s ease-in-out infinite; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2)); letter-spacing: 5px;}
 @keyframes floatCake { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
-/* Mobile Formatting */
+/* Signature */
+.signature { position: absolute; bottom: 15px; right: 20px; font-family: 'Fredoka', sans-serif; font-size: 0.9rem; color: rgba(255,255,255,0.8); z-index: 1000; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.5); pointer-events: none;}
+
 @media (max-width: 768px) {
-    .star-node.unlocked .polaroid { transform: scale(0.3) rotate(var(--rot)); }
-    .glow-title { font-size: 2.8rem; }
-    .sunflower { font-size: 3rem; }
-    .dialogue-text { font-size: 2rem; }
-    .glass-panel { margin-top: 80px; }
+    .banner-letter { font-size: 1.1rem; padding: 6px 10px 18px 10px; }
+    .row-top .banner-string { left: 15%; width: 70%; }
+    .glass-panel { margin-top: 110px; }
 }

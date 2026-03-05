@@ -1,6 +1,5 @@
 const friendName = "Emily"; // CHANGE THIS!
 
-// DOM Elements
 const nameSpan = document.getElementById('friendName');
 nameSpan.innerText = friendName.toUpperCase();
 
@@ -9,11 +8,9 @@ const giftBox = document.getElementById('gift-box-container');
 const giftText = document.querySelector('.gift-text');
 const bgMusic = document.getElementById('bg-music');
 
-// Background Layers
 const bgTwilight = document.getElementById('bg-twilight');
 const bgSunflower = document.getElementById('bg-sunflower');
 
-// Flow Layers
 const constellationLayer = document.getElementById('constellation-layer');
 const dialogueLayer = document.getElementById('dialogue-layer');
 const climaxLayer = document.getElementById('climax-layer');
@@ -24,19 +21,16 @@ const partyBanner = document.getElementById('party-banner');
 const instructionText = document.querySelector('.instruction-text');
 const dialogueText = document.getElementById('dialogue-text');
 
-// Overlay Elements
 const photoOverlay = document.getElementById('photo-overlay');
 const overlayImg = document.getElementById('overlay-img');
 const overlayCaption = document.getElementById('overlay-caption');
 
-// --- 0. Stardust Particle Engine ---
+// --- 0. Stardust Canvas ---
 const canvas = document.getElementById('stardust-canvas');
 const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+canvas.width = window.innerWidth; canvas.height = window.innerHeight;
 
 let particles = [];
-
 function drawStar(cx, cy, spikes, outerRadius, innerRadius) {
     let rot = Math.PI / 2 * 3; let x = cx; let y = cy; let step = Math.PI / spikes;
     ctx.beginPath(); ctx.moveTo(cx, cy - outerRadius);
@@ -46,24 +40,14 @@ function drawStar(cx, cy, spikes, outerRadius, innerRadius) {
     }
     ctx.lineTo(cx, cy - outerRadius); ctx.closePath(); ctx.fill();
 }
-
-function createParticle(x, y) {
-    particles.push({ 
-        x: x + (Math.random() * 40 - 20), y: y + (Math.random() * 40 - 20), 
-        size: Math.random() * 3 + 2, 
-        speedX: Math.random() * 1 - 0.5, speedY: Math.random() * 1 - 0.5, 
-        life: 1, rotation: Math.random() * Math.PI * 2 
-    });
-}
-
+function createParticle(x, y) { particles.push({ x: x + (Math.random() * 40 - 20), y: y + (Math.random() * 40 - 20), size: Math.random() * 3 + 2, speedX: Math.random() * 1 - 0.5, speedY: Math.random() * 1 - 0.5, life: 1, rotation: Math.random() * Math.PI * 2 }); }
 function animateParticles() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     for (let i = 0; i < particles.length; i++) {
         let p = particles[i];
         p.x += p.speedX; p.y += p.speedY; p.life -= 0.02; p.rotation += 0.05;
         ctx.fillStyle = `rgba(255, 215, 0, ${p.life})`;
-        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rotation);
-        drawStar(0, 0, 5, p.size, p.size / 2); ctx.restore();
+        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rotation); drawStar(0, 0, 5, p.size, p.size / 2); ctx.restore();
         if (p.life <= 0) { particles.splice(i, 1); i--; }
     }
     requestAnimationFrame(animateParticles);
@@ -72,63 +56,61 @@ animateParticles();
 
 window.addEventListener('mousemove', (e) => createParticle(e.x, e.y));
 window.addEventListener('touchmove', (e) => createParticle(e.touches[0].clientX, e.touches[0].clientY));
-window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; drawConstellationLines();});
 
-// --- 1. Randomize Outer Constellation Map ---
+// --- 1. Randomize Map ---
 function randomizeStarNodes() {
     for(let i = 1; i <= 6; i++) {
         const node = document.querySelector(`.star-node[data-index="${i}"]`);
         const angle = ((i - 1) * (Math.PI / 3)) + ((Math.random() - 0.5) * (Math.PI / 4)); 
         const dist = 25 + Math.random() * 13; 
-        const left = 50 + (dist * Math.cos(angle));
-        const top = 50 + (dist * Math.sin(angle) * 1.2); 
-        node.style.left = `${Math.max(10, Math.min(90, left))}%`;
-        node.style.top = `${Math.max(10, Math.min(90, top))}%`;
+        node.style.left = `${Math.max(10, Math.min(90, 50 + (dist * Math.cos(angle))))}%`;
+        node.style.top = `${Math.max(10, Math.min(90, 50 + (dist * Math.sin(angle) * 1.2)))}%`;
     }
 }
 randomizeStarNodes(); 
 
-// --- 2. Box Chase Logic ---
+// --- 2. Box Chase Logic (FIXED DISTANCE) ---
 let taps = 0; const maxTaps = 5;
 
 giftBox.addEventListener('click', (e) => {
     e.preventDefault(); taps++;
     if (taps < maxTaps - 1) {
         giftBox.style.transform = 'none';
-        giftBox.style.left = `${Math.random() * Math.max(0, window.innerWidth - 150)}px`;
-        giftBox.style.top = `${Math.random() * Math.max(0, window.innerHeight - 150)}px`;
+        
+        let newX, newY;
+        const boxRect = giftBox.getBoundingClientRect();
+        const currentX = boxRect.left; 
+        const currentY = boxRect.top;
+
+        // Force the box to move at least 150px away from its current spot
+        do {
+            newX = Math.random() * Math.max(0, window.innerWidth - 150);
+            newY = Math.random() * Math.max(0, window.innerHeight - 150);
+        } while (Math.abs(newX - currentX) < 150 && Math.abs(newY - currentY) < 150);
+
+        giftBox.style.left = `${newX}px`;
+        giftBox.style.top = `${newY}px`;
+        
         giftText.innerText = ["Catch me!", "Nope, here!", "So slow! 😜", "Almost..."][taps - 1] || "";
         if (navigator.vibrate) navigator.vibrate(50);
     } 
     else if (taps === maxTaps - 1) {
         giftBox.style.left = '50%'; giftBox.style.top = '50%'; giftBox.style.transform = 'translate(-50%, -50%)';
         giftText.innerText = "Open me! 🎁";
-        if (navigator.vibrate) navigator.vibrate(50);
     }
-    else if (taps === maxTaps) {
-        startConstellationPhase();
-        if (navigator.vibrate) navigator.vibrate([100, 50, 100]); 
-    }
+    else if (taps === maxTaps) { startConstellationPhase(); }
 });
 
 // --- 3. Constellation Phase ---
-let unlockedCount = 0;
-let linesData = [];
-let currentViewingNode = null; 
+let unlockedCount = 0; let linesData = []; let currentViewingNode = null; 
 const nodeConnections = [[0,1], [0,2], [0,3], [0,4], [0,5], [0,6], [1,2], [2,3], [3,4], [4,5], [5,6], [6,1]];
 
 function startConstellationPhase() {
-    if(bgMusic) { bgMusic.volume = 0.2; bgMusic.play().catch(e => console.log("Audio needed")); }
-    giftBox.style.transform = 'scale(0)';
-    bgTwilight.style.opacity = '1';
-
+    if(bgMusic) { bgMusic.volume = 0.2; bgMusic.play().catch(e=>console.log("Audio skipped")); }
+    giftBox.style.transform = 'scale(0)'; bgTwilight.style.opacity = '1';
     setTimeout(() => { 
         introLayer.style.opacity = '0'; 
-        setTimeout(() => {
-            introLayer.style.display = 'none';
-            constellationLayer.classList.remove('hidden');
-            drawConstellationLines(); 
-        }, 800);
+        setTimeout(() => { introLayer.style.display = 'none'; constellationLayer.classList.remove('hidden'); drawConstellationLines(); }, 800);
     }, 300);
 }
 
@@ -140,65 +122,45 @@ function drawConstellationLines() {
         const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         line.setAttribute('x1', rect1.left + rect1.width/2); line.setAttribute('y1', rect1.top + rect1.height/2);
         line.setAttribute('x2', rect2.left + rect2.width/2); line.setAttribute('y2', rect2.top + rect2.height/2);
-        line.classList.add('constellation-line');
-        svgCanvas.appendChild(line);
+        line.classList.add('constellation-line'); svgCanvas.appendChild(line);
         linesData.push({ element: line, nodeA: pair[0], nodeB: pair[1] });
     });
 }
 
-// Open Photo
 starNodes.forEach(node => {
     node.addEventListener('click', () => {
         if(node.classList.contains('unlocked') || currentViewingNode) return; 
-        currentViewingNode = node; 
-        overlayImg.src = node.querySelector('img').src;
-        overlayCaption.innerText = node.querySelector('.caption').innerText;
-        photoOverlay.classList.add('active');
+        currentViewingNode = node; overlayImg.src = node.querySelector('img').src;
+        overlayCaption.innerText = node.querySelector('.caption').innerText; photoOverlay.classList.add('active');
     });
 });
 
-// Close Photo
 photoOverlay.addEventListener('click', () => {
     if (!currentViewingNode) return;
-    photoOverlay.classList.remove('active');
-    const node = currentViewingNode;
-    currentViewingNode = null; 
-
+    photoOverlay.classList.remove('active'); const node = currentViewingNode; currentViewingNode = null; 
     node.classList.add('unlocked');
-    
-    const rect = node.getBoundingClientRect();
-    for(let i=0; i<40; i++) createParticle(rect.left + rect.width/2, rect.top + rect.height/2);
-    
+    const rect = node.getBoundingClientRect(); for(let i=0; i<40; i++) createParticle(rect.left + rect.width/2, rect.top + rect.height/2);
     unlockedCount++;
 
     linesData.forEach(lineObj => {
-        const nodeA = document.querySelector(`.star-node[data-index="${lineObj.nodeA}"]`);
-        const nodeB = document.querySelector(`.star-node[data-index="${lineObj.nodeB}"]`);
-        if (nodeA.classList.contains('unlocked') && nodeB.classList.contains('unlocked')) { 
+        if (document.querySelector(`.star-node[data-index="${lineObj.nodeA}"]`).classList.contains('unlocked') && 
+            document.querySelector(`.star-node[data-index="${lineObj.nodeB}"]`).classList.contains('unlocked')) { 
             lineObj.element.classList.add('drawn'); 
         }
     });
 
     if (unlockedCount === 6) {
         setTimeout(() => {
-            const centerStar = document.querySelector('.star-node[data-index="0"]');
-            centerStar.classList.remove('hidden-core');
-            centerStar.classList.add('reveal-core');
+            const cStar = document.querySelector('.star-node[data-index="0"]');
+            cStar.classList.remove('hidden-core'); cStar.classList.add('reveal-core');
             instructionText.innerText = "The core is ready...";
-            const cRect = centerStar.getBoundingClientRect();
-            for(let i=0; i<40; i++) createParticle(cRect.left + cRect.width/2, cRect.top + cRect.height/2);
-            if (navigator.vibrate) navigator.vibrate([100, 50, 100]); 
+            const cRect = cStar.getBoundingClientRect(); for(let i=0; i<40; i++) createParticle(cRect.left + cRect.width/2, cRect.top + cRect.height/2);
         }, 1000); 
     }
-
-    if(unlockedCount === starNodes.length) {
-        instructionText.style.opacity = '0';
-        // Go to Dialogue Transition instead of snapping to climax
-        setTimeout(playDialogue, 400); 
-    }
+    if(unlockedCount === starNodes.length) { instructionText.style.opacity = '0'; setTimeout(playDialogue, 400); }
 });
 
-// --- 4. Dialogue Transition ---
+// --- 4. Dialogue Transition (SLICED TIMINGS) ---
 const messages = [
     "From all the stars in our sky...",
     "And all the memories we've made...",
@@ -206,35 +168,23 @@ const messages = [
 ];
 
 function playDialogue() {
-    // Fade out the map layer
     constellationLayer.style.opacity = '0';
-    
     setTimeout(() => {
         constellationLayer.style.display = 'none';
-        
-        // Show the dark, starry dialogue background
-        dialogueLayer.classList.remove('hidden');
-        dialogueLayer.style.opacity = '1';
+        dialogueLayer.classList.remove('hidden'); dialogueLayer.style.opacity = '1';
         
         let i = 0;
         function showNextMessage() {
             if (i < messages.length) {
-                dialogueText.innerText = messages[i];
-                dialogueText.classList.add('show');
-                
-                // Keep the text on screen for 2.5 seconds before fading out
+                dialogueText.innerText = messages[i]; dialogueText.classList.add('show');
+                // Sliced timing: 1.8s read time, then fast fade
                 setTimeout(() => {
-                    dialogueText.classList.remove('show');
-                    i++;
-                    setTimeout(showNextMessage, 1000); // Wait 1s before showing next line
-                }, 2500); 
+                    dialogueText.classList.remove('show'); i++;
+                    setTimeout(showNextMessage, 500); // 0.5s gap between lines
+                }, 1800); 
             } else {
-                // Done with messages, move to Grand Climax
                 dialogueLayer.style.opacity = '0';
-                setTimeout(() => {
-                    dialogueLayer.style.display = 'none';
-                    triggerGrandClimax();
-                }, 1000);
+                setTimeout(() => { dialogueLayer.style.display = 'none'; triggerGrandClimax(); }, 800);
             }
         }
         showNextMessage();
@@ -243,25 +193,16 @@ function playDialogue() {
 
 // --- 5. Grand Climax ---
 function triggerGrandClimax() {
-    if(bgMusic) {
-        let vol = 0.2;
-        let fade = setInterval(() => { vol += 0.05; if(vol >= 1) { clearInterval(fade); vol = 1; } bgMusic.volume = vol; }, 150);
-    }
-    
-    // Bloom the vibrant sunflower background
+    if(bgMusic) { let vol = 0.2; let fade = setInterval(() => { vol += 0.05; if(vol >= 1) { clearInterval(fade); vol = 1; } bgMusic.volume = vol; }, 150); }
     bgSunflower.style.opacity = '1';
-
     setTimeout(() => {
-        climaxLayer.classList.remove('hidden');
-        partyBanner.classList.remove('hidden');
-        setTimeout(() => partyBanner.classList.add('drop'), 100);
-        fireMassiveConfetti();
+        climaxLayer.classList.remove('hidden'); partyBanner.classList.remove('hidden');
+        setTimeout(() => partyBanner.classList.add('drop'), 100); fireMassiveConfetti();
     }, 400); 
 }
 
 function fireMassiveConfetti() {
-    const end = Date.now() + 1500; 
-    const colors = ['#00BFFF', '#ff0080', '#8A2BE2', '#32CD32']; 
+    const end = Date.now() + 1500; const colors = ['#00BFFF', '#ff0080', '#8A2BE2', '#32CD32']; 
     (function frame() {
         confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0, y: 0.8 }, colors: colors, zIndex: 9999 });
         confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1, y: 0.8 }, colors: colors, zIndex: 9999 });
