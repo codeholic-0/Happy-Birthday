@@ -1,322 +1,148 @@
-/* --- Reset & Variables --- */
 :root {
-    --glass-dark: rgba(20, 10, 30, 0.6); /* Slightly purple tint */
+    --glass-dark: rgba(15, 10, 30, 0.7); 
     --glass-border: rgba(255, 255, 255, 0.2);
-    --text-gold: #FFD700;
-    --banner-red: #D32F2F;
+    --star-gold: #FFD700;
+    --banner-color: #ff007f;
 }
 
 * { box-sizing: border-box; }
 
 body {
-    margin: 0;
-    height: 100vh;
-    overflow: hidden; 
+    margin: 0; height: 100vh; overflow: hidden; 
     font-family: 'Fredoka', sans-serif;
-    background-color: #000;
-    color: white;
+    background-color: #000; color: white;
     -webkit-tap-highlight-color: transparent;
-    -webkit-font-smoothing: antialiased;
+    perspective: 1000px;
 }
 
-body.party-mode {
-    overflow-y: auto;
-    height: auto;
+#stardust-canvas {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    pointer-events: none; z-index: 9999;
 }
 
-/* --- Deep Twilight Background --- */
+/* Background Gradients */
 .twilight-background {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    z-index: -2;
-    background: linear-gradient(135deg, #0f0c29 0%, #302b63 40%, #24243e 100%);
-    /* We overlay a gradient animation on top via pseudo-element to simulate shifting light */
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: -3; 
+    background: radial-gradient(circle at bottom, #302b63 0%, #0f0c29 60%, #000000 100%);
+    transition: background 2s ease-in-out; 
+}
+.twilight-background.deep-space {
+    background: radial-gradient(circle at center, #0a0710 0%, #030208 60%, #000000 100%);
 }
 
-/* --- Twinkling Stars Layer --- */
-.stars {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    z-index: -1;
-    background-image: 
-        radial-gradient(white 1px, transparent 1px),
-        radial-gradient(white 1px, transparent 1px);
-    background-size: 50px 50px;
-    background-position: 0 0, 25px 25px;
-    opacity: 0.3;
-    animation: twinkle 4s infinite alternate;
-}
-
-@keyframes twinkle {
-    0% { opacity: 0.3; }
-    100% { opacity: 0.6; }
-}
-
-/* --- Intro Layer --- */
+/* Intro Layer */
 #intro-layer {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background-color: #000;
-    z-index: 200;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: opacity 1.5s ease-out;
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #000;
+    z-index: 200; display: flex; justify-content: center; align-items: center; transition: opacity 1.5s ease-out;
+}
+#gift-box-container { text-align: center; cursor: pointer; position: absolute; padding: 30px; transition: top 0.4s ease, left 0.4s ease; }
+.gift-bounce { font-size: 5rem; filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.6)); animation: pulseGift 2s infinite; }
+.gift-text { font-family: 'Dancing Script', cursive; font-size: 1.5rem; color: #bbb; margin-top: 10px; pointer-events: none; }
+@keyframes pulseGift { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.9)); } }
+
+/* Constellation Layer */
+#constellation-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 50; transition: opacity 1.5s ease; }
+#constellation-layer.hidden, #climax-layer.hidden { opacity: 0; pointer-events: none; visibility: hidden; }
+
+.instruction-text {
+    position: absolute; top: 5%; left: 50%; transform: translateX(-50%); width: 100%; text-align: center;
+    font-family: 'Dancing Script', cursive; font-size: 1.5rem; color: var(--star-gold); text-shadow: 0 0 10px rgba(255,215,0,0.5);
+    transition: opacity 0.5s ease; animation: floatText 3s infinite alternate;
+}
+@keyframes floatText { from { opacity: 0.6; transform: translate(-50%, 0); } to { opacity: 1; transform: translate(-50%, -5px); } }
+
+/* SVG Lines */
+#constellation-lines { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+.constellation-line { stroke: rgba(255, 215, 0, 0.4); stroke-width: 2; opacity: 0; transition: opacity 1s ease, stroke 1s ease; }
+.constellation-line.drawn { opacity: 1; stroke: rgba(255, 215, 0, 0.9); filter: drop-shadow(0 0 5px gold); }
+
+/* Star Nodes & Center Reveal Logic */
+.star-node { position: absolute; transform: translate(-50%, -50%); z-index: 10; display: flex; justify-content: center; align-items: center; }
+
+.star-node.hidden-core {
+    opacity: 0; pointer-events: none; transform: translate(-50%, -50%) scale(0);
+    transition: opacity 1s ease, transform 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.star-node.reveal-core {
+    opacity: 1; pointer-events: auto; transform: translate(-50%, -50%) scale(1);
 }
 
-#gift-box-container {
-    text-align: center;
-    cursor: pointer;
-    position: absolute;
-    padding: 30px; 
-    transition: top 0.4s cubic-bezier(0.25, 0.1, 0.25, 1), left 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+.glowing-star {
+    width: 18px; height: 18px; background-color: white; border-radius: 50%; cursor: pointer;
+    box-shadow: 0 0 15px 5px rgba(255, 215, 0, 0.8), 0 0 30px 10px rgba(255, 255, 255, 0.4);
+    transition: transform 0.3s ease, opacity 0.5s ease; animation: starPulse 2s infinite alternate;
 }
+.star-node:hover .glowing-star { transform: scale(1.5); }
+@keyframes starPulse { from { transform: scale(1); opacity: 0.8; } to { transform: scale(1.2); opacity: 1; } }
 
-.gift-bounce {
-    font-size: 5rem;
-    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.6));
-    animation: pulseGift 2s infinite;
-}
-
-.gift-text {
-    font-family: 'Dancing Script', cursive;
-    font-size: 1.5rem;
-    color: #bbb;
-    margin-top: 10px;
-    pointer-events: none; 
-}
-
-@keyframes pulseGift {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.9)); }
-    100% { transform: scale(1); }
-}
-
-/* --- Ribbon Banner with Sway --- */
-.ribbon-banner {
-    position: fixed;
-    top: -150px; 
-    left: 50%;
-    transform: translateX(-50%); /* Center it */
-    background: var(--banner-red);
-    color: #fff;
-    padding: 15px 40px 25px 40px;
-    font-family: 'Dancing Script', cursive;
-    font-size: 1.8rem;
-    z-index: 150; 
-    border-radius: 0 0 40px 40px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-    border: 2px solid rgba(255,255,255,0.1);
-    white-space: nowrap;
-    transition: top 1s cubic-bezier(0.34, 1.56, 0.64, 1); 
-}
-
-.ribbon-banner.drop-down {
-    top: -10px;
-    /* Add a gentle sway after it drops */
-    animation: ribbonSway 3s ease-in-out infinite alternate;
-    animation-delay: 1s; /* Wait for drop to finish */
-}
-
-@keyframes ribbonSway {
-    0% { transform: translateX(-50%) rotate(-2deg); }
-    100% { transform: translateX(-50%) rotate(2deg); }
-}
-
-.ribbon-banner::before, .ribbon-banner::after {
-    content: '';
-    position: absolute;
-    top: -200px; 
-    width: 2px;
-    height: 220px;
-    background: rgba(255,255,255,0.7); 
-    z-index: -1;
-}
-.ribbon-banner::before { left: 15px; }
-.ribbon-banner::after { right: 15px; }
-
-
-/* --- Main Layout --- */
-.main-content {
-    display: flex;
-    width: 100%;
-    min-height: 100vh;
-    padding: 20px;
-    gap: 20px;
-    opacity: 1;
-    transition: opacity 2s ease-in;
-    align-items: center; 
-    padding-top: 100px; 
-}
-
-.hidden {
-    opacity: 0;
-    pointer-events: none;
-    visibility: hidden; 
-    transition: opacity 2s ease-in, visibility 2s;
-}
-
-.main-content:not(.hidden), .ribbon-banner:not(.hidden) {
-    visibility: visible;
-}
-
-.side-panel {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 50px;
-    align-items: center;
-    position: relative; 
-}
-
-.center-stage {
-    flex: 1.5;
-    text-align: center;
-    position: relative;
-    z-index: 10; 
-}
-
-/* Refined Glass Panel */
-.glass-panel {
-    background: var(--glass-dark);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border: 1px solid var(--glass-border);
-    border-radius: 30px;
-    padding: 40px;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
-    width: 100%;
-}
-
-/* Gradient Text Title */
-.glow-title {
-    font-size: 4.2rem;
-    margin: 0;
-    line-height: 1.1;
-    background: linear-gradient(to right, #FFD700, #ff8c00, #ff0080);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent; /* Makes gradient show */
-    filter: drop-shadow(0 0 15px rgba(255, 100, 0, 0.5));
-}
-
-.glow-title span {
-    display: block;
-    margin-top: 10px;
-}
-
-.subtitle {
-    font-family: 'Dancing Script', cursive;
-    font-size: 1.8rem;
-    color: #e0e0e0;
-    margin-bottom: 20px;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-}
-
-.cake-display {
-    font-size: 5rem;
-    animation: floatCake 3s ease-in-out infinite;
-    filter: drop-shadow(0 10px 10px rgba(0,0,0,0.3));
-}
-
-@keyframes floatCake {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-12px); }
-}
-
-.message-box { margin-top: 20px; color: #aaa; font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase;}
-
-/* --- Polaroids --- */
+/* Polaroids */
 .polaroid {
-    background: #fff;
-    padding: 12px 12px 50px 12px; /* Classic polaroid bottom */
-    width: 100%;
-    max-width: 240px; 
-    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-    color: #333;
-    transform: rotate(var(--rot)) translateZ(0); 
-    will-change: transform;
-    backface-visibility: hidden;
-    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), z-index 0s;
+    position: absolute; background: #fff; padding: 8px 8px 35px 8px; width: 160px; 
+    box-shadow: 0 20px 40px rgba(0,0,0,0.8); color: #333; pointer-events: none; opacity: 0;
+    transform: scale(0) rotate(0deg) translateZ(-100px);
+    transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease, box-shadow 0.3s ease;
+}
+.star-node.unlocked .glowing-star { opacity: 0; pointer-events: none; }
+.star-node.unlocked { z-index: 20; } 
+.star-node.unlocked .polaroid {
+    opacity: 1; pointer-events: auto; transform: scale(1.1) rotate(var(--rot)) translateZ(50px);
+}
+.polaroid img { width: 100%; height: auto; border: 1px solid #ccc; display: block; filter: sepia(10%); }
+.caption { font-family: 'Dancing Script', cursive; font-size: 1.1rem; margin-top: 8px; text-align: center; font-weight: bold; }
+
+.polaroid:hover { transform: scale(1.4) rotate(0deg) translateZ(120px) !important; box-shadow: 20px 30px 50px rgba(0,0,0,0.9); z-index: 100; }
+
+/* STAGE 3: CLIMAX LAYER */
+#climax-layer {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 500; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px;
 }
 
-/* Main Photo Styling */
-.main-photo {
-    max-width: 340px; 
-    margin: 30px auto; 
-    z-index: 20; 
-    border: 1px solid rgba(255,255,255,0.5); /* Slight glow border */
+/* Surprise Banner */
+.surprise-banner {
+    position: absolute; top: -100px; background: var(--banner-color); color: #fff;
+    padding: 10px 40px; font-family: 'Fredoka', sans-serif; font-size: 2rem; font-weight: bold;
+    border-radius: 0 0 30px 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); z-index: 600;
+    transition: top 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.surprise-banner.drop { top: 0; animation: bannerSwing 3s ease-in-out infinite alternate; transform-origin: top center; }
+@keyframes bannerSwing { 0% { transform: rotate(-2deg); } 100% { transform: rotate(2deg); } }
+
+.glass-panel {
+    background: var(--glass-dark); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+    border: 1px solid var(--glass-border); border-radius: 30px; padding: 40px 20px;
+    text-align: center; box-shadow: 0 15px 50px rgba(0, 0, 0, 0.8); width: 100%; max-width: 450px;
+    transform: scale(0.8) translateY(50px); opacity: 0;
+    transition: transform 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 1.5s ease;
+}
+#climax-layer:not(.hidden) .glass-panel { transform: scale(1) translateY(0); opacity: 1; }
+
+.glow-title {
+    font-size: 3rem; margin: 0; line-height: 1.1; background: linear-gradient(to right, #FFD700, #ff8c00, #ff00de);
+    -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 0 10px rgba(255, 100, 0, 0.5));
+}
+.subtitle { font-family: 'Dancing Script', cursive; font-size: 1.8rem; color: #e0e0e0; margin: 10px 0 20px 0; }
+
+/* Final Photo Frame */
+.final-photo-frame {
+    position: relative; width: 80%; max-width: 280px; margin: 0 auto 20px auto;
+    background: #fff; padding: 15px; box-shadow: 0 15px 30px rgba(0,0,0,0.6);
+    transform: rotate(-3deg); border: 2px solid #eaeaea;
+}
+.final-photo-frame img { width: 100%; height: auto; display: block; border: 1px solid #ddd; }
+.frame-tape {
+    position: absolute; top: -15px; left: 50%; transform: translateX(-50%) rotate(-4deg);
+    width: 80px; height: 30px; background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(5px);
+    border: 1px solid rgba(255,255,255,0.6); box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-.polaroid img { 
-    width: 100%; 
-    height: auto; 
-    border: 1px solid #eee; 
-    display: block;
-    /* Subtle sepia filter for nostalgia */
-    filter: sepia(10%) contrast(1.1); 
-}
+.cake-display { font-size: 4rem; animation: floatCake 3s ease-in-out infinite; }
+@keyframes floatCake { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
-.caption { 
-    font-family: 'Dancing Script', cursive; 
-    font-size: 1.5rem; 
-    margin-top: 15px; 
-    text-align: center;
-    color: #444;
-}
-
-.hidden-on-start { opacity: 0; }
-
-.polaroid.popped {
-    animation: popOut 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-    animation-delay: var(--delay); 
-}
-
-@keyframes popOut {
-    0% { opacity: 0; transform: scale(0.4) translateY(-150px) rotate(0deg); }
-    70% { opacity: 1; transform: scale(1.1) translateY(0) rotate(calc(var(--rot) * 1.2)); }
-    100% { opacity: 1; transform: scale(1) translateY(0) rotate(var(--rot)); }
-}
-
-/* Lift effect on hover */
-.polaroid:hover {
-    transform: scale(1.08) rotate(0deg) !important;
-    z-index: 100 !important;
-    box-shadow: 0 25px 50px rgba(0,0,0,0.8);
-    transition: transform 0.3s ease-out;
-}
-
-/* --- MOBILE --- */
+/* Mobile Adjustments */
 @media (max-width: 768px) {
-    .main-content {
-        flex-direction: column; 
-        padding: 15px;
-        gap: 30px;
-        align-items: stretch;
-        padding-top: 110px; /* Space for banner */
-    }
-
-    .ribbon-banner { 
-        font-size: 1.3rem; 
-        padding: 12px 25px 18px 25px; 
-    }
-
-    .side-panel {
-        flex-direction: row; 
-        gap: 15px;
-        justify-content: center;
-    }
-
-    .polaroid { width: 48%; padding-bottom: 35px; max-width: none;}
-    .main-photo { width: 85%; max-width: 300px; }
-
-    .glow-title { font-size: 2.8rem; }
-    .subtitle { font-size: 1.4rem; }
-    .glass-panel { padding: 30px 15px; }
-    
-    @keyframes popOut {
-        0% { opacity: 0; transform: scale(0.4) translateY(-200px) rotate(0deg); }
-        70% { opacity: 1; transform: scale(1.1) translateY(0) rotate(calc(var(--rot) * 1.2)); }
-        100% { opacity: 1; transform: scale(1) translateY(0) rotate(var(--rot)); }
-    }
+    .polaroid { width: 130px; }
+    .star-node.unlocked .polaroid { transform: scale(1.1) rotate(var(--rot)) translateZ(20px); }
+    .glow-title { font-size: 2.5rem; }
 }

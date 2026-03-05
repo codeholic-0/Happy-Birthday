@@ -12,8 +12,11 @@
 
     <audio id="bg-music" loop>
         <source src="song.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
     </audio>
+
+    <canvas id="stardust-canvas"></canvas>
+
+    <div class="twilight-background"></div>
 
     <div id="intro-layer">
         <div id="gift-box-container">
@@ -22,50 +25,84 @@
         </div>
     </div>
 
-    <div class="twilight-background"></div>
-    <div class="stars"></div> <div class="ribbon-banner hidden">
-        🎉 SURPRISE! 🎉
+    <div id="constellation-layer" class="hidden">
+        <p class="instruction-text">Tap the stars to uncover the memories...</p>
+        
+        <svg id="constellation-lines"></svg>
+
+        <div class="star-node center-node hidden-core" style="top: 50%; left: 50%;" data-index="0">
+            <div class="glowing-star" style="width: 30px; height: 30px; box-shadow: 0 0 25px 10px rgba(255, 215, 0, 1), 0 0 50px 15px rgba(255, 255, 255, 0.8);"></div>
+            <div class="polaroid" style="--rot: 2deg;">
+                <img src="https://picsum.photos/id/1011/300/300" alt="Center Memory">
+                <p class="caption">The Core of It All</p>
+            </div>
+        </div>
+
+        <div class="star-node" data-index="1">
+            <div class="glowing-star"></div>
+            <div class="polaroid" style="--rot: -5deg;">
+                <img src="https://picsum.photos/id/1015/300/300" alt="Memory 1">
+                <p class="caption">New Beginnings</p>
+            </div>
+        </div>
+
+        <div class="star-node" data-index="2">
+            <div class="glowing-star"></div>
+            <div class="polaroid" style="--rot: 6deg;">
+                <img src="https://picsum.photos/id/1025/300/300" alt="Memory 2">
+                <p class="caption">Unforgettable</p>
+            </div>
+        </div>
+
+        <div class="star-node" data-index="3">
+            <div class="glowing-star"></div>
+            <div class="polaroid" style="--rot: -4deg;">
+                <img src="https://picsum.photos/id/1074/300/300" alt="Memory 3">
+                <p class="caption">Always Smiling</p>
+            </div>
+        </div>
+
+        <div class="star-node" data-index="4">
+            <div class="glowing-star"></div>
+            <div class="polaroid" style="--rot: 5deg;">
+                <img src="https://picsum.photos/id/237/300/300" alt="Memory 4">
+                <p class="caption">Best Friends</p>
+            </div>
+        </div>
+
+        <div class="star-node" data-index="5">
+            <div class="glowing-star"></div>
+            <div class="polaroid" style="--rot: -8deg;">
+                <img src="https://picsum.photos/id/1062/300/300" alt="Memory 5">
+                <p class="caption">Wild Adventures</p>
+            </div>
+        </div>
+
+        <div class="star-node" data-index="6">
+            <div class="glowing-star"></div>
+            <div class="polaroid" style="--rot: 3deg;">
+                <img src="https://picsum.photos/id/1005/300/300" alt="Memory 6">
+                <p class="caption">Late Nights</p>
+            </div>
+        </div>
     </div>
 
-    <div class="main-content hidden" id="main-party">
-        
+    <div id="climax-layer" class="hidden">
+        <div class="surprise-banner hidden">
+            🎉 SURPRISE! 🎉
+        </div>
+
         <div class="center-stage glass-panel">
-            <h1 class="glow-title">HAPPY BIRTHDAY<br><span id="friendName">Debankan</span></h1>
-            <p class="subtitle">MANY MANY RETURNS OF THE DAY ✨</p>
+            <h1 class="glow-title">HAPPY BIRTHDAY<br><span id="friendName">ALEX</span></h1>
+            <p class="subtitle">The stars aligned for you ✨</p>
             
+            <div class="final-photo-frame">
+                <img src="https://picsum.photos/id/103/400/400" alt="Our Favorite Moment">
+                <div class="frame-tape"></div>
+            </div>
+
             <div class="cake-display">🎂</div>
-
-            <div class="polaroid main-photo hidden-on-start" style="--rot: 1.5deg; --delay: 0.1s">
-                <img src="images/main.jpg" alt="Main Memory">
-                <p class="caption">The Star of the Show 🌟</p>
-            </div>
-
-            <div class="message-box">~From Debankan 😶‍🌫️</div>
         </div>
-
-        <div class="side-panel">
-            <div class="polaroid hidden-on-start" style="--rot: -6deg; --delay: 0.3s">
-                <img src="images/damn.jpg" alt="Memory">
-                <p class="caption">👀🔥</p>
-            </div>
-            <div class="polaroid hidden-on-start" style="--rot: 6deg; --delay: 0.5s">
-                <img src="images/durga_puja.jpg" alt="Memory">
-                <p class="caption">😇</p>
-            </div>
-        </div>
-
-        <div class="side-panel">
-            <div class="polaroid hidden-on-start" style="--rot: 4deg; --delay: 0.7s">
-                <img src="images/school.jpg" alt="Memory">
-                <p class="caption">👻</p>
-            </div>
-            <div class="polaroid hidden-on-start" style="--rot: -5deg; --delay: 0.9s">
-                <img src="images/wtf.jpg" alt="Memory">
-                <p class="caption">🤣</p>
-            </div>
-        </div>
-        
-        <div class="footer-spacer"></div>
     </div>
 
     <script src="script.js"></script>
