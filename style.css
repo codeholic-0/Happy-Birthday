@@ -134,7 +134,7 @@ body { margin: 0; height: 100vh; overflow: hidden; font-family: 'Fredoka', sans-
 .cake-emoji { font-size: 3rem; margin: 0 10px; animation: floatCake 3s ease-in-out infinite; filter: drop-shadow(0 5px 15px rgba(255, 215, 0, 0.3)); }
 @keyframes floatCake { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 
-.author p { font-family: 'Dancing Script', cursive; font-size: 1.3rem; color: #bbb; margin: 0; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+.author p { font-family: 'Roboto'; font-size: 1.3rem; color: #bbb; margin: 0; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
 
 /* --- 4th PHASE (OUTRO) --- */
 #outro-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9000; display: none; justify-content: center; align-items: center; background: #05050a; opacity: 0; transition: opacity 1.5s ease; flex-direction: column; }
