@@ -14,9 +14,11 @@
         <source src="song.mp3" type="audio/mpeg">
     </audio>
 
-    <canvas id="stardust-canvas"></canvas>
+    <div class="bg-layer bg-sunset"></div>
+    <div class="bg-layer bg-twilight" id="bg-twilight"></div>
+    <div class="bg-layer bg-sunflower" id="bg-sunflower"></div>
 
-    <div class="twilight-background"></div>
+    <canvas id="stardust-canvas"></canvas>
 
     <div id="intro-layer">
         <div id="gift-box-container">
@@ -45,7 +47,6 @@
                 <p class="caption">New Beginnings</p>
             </div>
         </div>
-
         <div class="star-node" data-index="2">
             <div class="glowing-star"></div>
             <div class="polaroid" style="--rot: 6deg;">
@@ -53,7 +54,6 @@
                 <p class="caption">Unforgettable</p>
             </div>
         </div>
-
         <div class="star-node" data-index="3">
             <div class="glowing-star"></div>
             <div class="polaroid" style="--rot: -4deg;">
@@ -61,7 +61,6 @@
                 <p class="caption">Always Smiling</p>
             </div>
         </div>
-
         <div class="star-node" data-index="4">
             <div class="glowing-star"></div>
             <div class="polaroid" style="--rot: 5deg;">
@@ -69,7 +68,6 @@
                 <p class="caption">Best Friends</p>
             </div>
         </div>
-
         <div class="star-node" data-index="5">
             <div class="glowing-star"></div>
             <div class="polaroid" style="--rot: -8deg;">
@@ -77,7 +75,6 @@
                 <p class="caption">Wild Adventures</p>
             </div>
         </div>
-
         <div class="star-node" data-index="6">
             <div class="glowing-star"></div>
             <div class="polaroid" style="--rot: 3deg;">
@@ -88,20 +85,29 @@
     </div>
 
     <div id="climax-layer" class="hidden">
-        <div class="surprise-banner hidden">
-            🎉 SURPRISE! 🎉
-        </div>
-
+        <div class="surprise-banner hidden">🎉 SURPRISE! 🎉</div>
         <div class="center-stage glass-panel">
+            
+            <div class="sunflower sf-tl">🌻</div>
+            <div class="sunflower sf-tr">🌻</div>
+            <div class="sunflower sf-bl">🌻</div>
+            <div class="sunflower sf-br">🌻</div>
+
             <h1 class="glow-title">HAPPY BIRTHDAY<br><span id="friendName">ALEX</span></h1>
-            <p class="subtitle">The stars aligned for you ✨</p>
+            <p class="subtitle">You are my sunshine ✨</p>
             
             <div class="final-photo-frame">
                 <img src="https://picsum.photos/id/103/400/400" alt="Our Favorite Moment">
                 <div class="frame-tape"></div>
             </div>
-
             <div class="cake-display">🎂</div>
+        </div>
+    </div>
+
+    <div id="photo-overlay">
+        <div class="overlay-polaroid">
+            <img id="overlay-img" src="" alt="Memory">
+            <p id="overlay-caption" class="caption"></p>
         </div>
     </div>
 
