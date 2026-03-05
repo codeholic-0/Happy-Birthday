@@ -1,129 +1,174 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Surprise!</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Fredoka:wght@400;600&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
+
 <body>
+    <audio id="bg-music" loop>
+        <source src="song.mp3" type="audio/mpeg">
+    </audio>
 
-    <audio id="bg-music" loop><source src="song.mp3" type="audio/mpeg"></audio>
-
-    <div class="bg-layer bg-sunset"></div>
-    <div class="bg-layer bg-twilight" id="bg-twilight"></div>
-    <div class="bg-layer bg-sunflower" id="bg-sunflower"></div>
+    <div id="bg-sunset" class="bg-layer bg-sunset"></div>
+    <div id="bg-twilight" class="bg-layer bg-twilight"></div>
+    <div id="bg-climax-dark" class="bg-layer bg-climax-dark"></div>
 
     <canvas id="stardust-canvas"></canvas>
 
     <div id="intro-layer">
-        <div id="gift-box-container" style="left: 50%; top: 50%; transform: translate(-50%, -50%);">
+        <div id="gift-box-container">
             <div class="gift-bounce">🎁</div>
-            <p class="gift-text">Tap to open...</p>
+            <div class="gift-text">Tap to open...</div>
         </div>
     </div>
 
     <div id="constellation-layer" class="hidden">
-        <p class="instruction-text">Tap the stars to uncover the memories...</p>
+        <div class="instruction-text">Tap the stars to unlock memories...</div>
         <svg id="constellation-lines"></svg>
 
-        <div class="star-node center-node hidden-core" style="top: 55%; left: 50%;" data-index="0">
-            <div class="emoji-star">⭐</div>
-            <div class="polaroid" style="--rot: 2deg;">
-                <img src="https://picsum.photos/id/1011/300/300" alt="Center Memory">
-                <p class="caption">The Core of It All</p>
+        <div class="star-node center-node hidden-core" data-index="0">
+            <div class="emoji-star">🌟</div>
+            <div class="polaroid">
+                <img src="https://via.placeholder.com/150" alt="Core Memory">
+                <div class="caption">The Core of It All</div>
             </div>
         </div>
 
-        <div class="star-node" data-index="1">
+        <div class="star-node" data-index="1" style="--rot: -5deg;">
             <div class="glowing-star"></div>
-            <div class="polaroid" style="--rot: -5deg;"><img src="https://picsum.photos/id/1015/300/300" alt="Memory 1"><p class="caption">New Beginnings</p></div>
+            <div class="polaroid"><img src="https://via.placeholder.com/150">
+                <div class="caption">New Beginnings</div>
+            </div>
         </div>
-        <div class="star-node" data-index="2">
+        <div class="star-node" data-index="2" style="--rot: 3deg;">
             <div class="glowing-star"></div>
-            <div class="polaroid" style="--rot: 6deg;"><img src="https://picsum.photos/id/1025/300/300" alt="Memory 2"><p class="caption">Unforgettable</p></div>
+            <div class="polaroid"><img src="https://via.placeholder.com/150">
+                <div class="caption">Unforgettable</div>
+            </div>
         </div>
-        <div class="star-node" data-index="3">
+        <div class="star-node" data-index="3" style="--rot: -2deg;">
             <div class="glowing-star"></div>
-            <div class="polaroid" style="--rot: -4deg;"><img src="https://picsum.photos/id/1074/300/300" alt="Memory 3"><p class="caption">Always Smiling</p></div>
+            <div class="polaroid"><img src="https://via.placeholder.com/150">
+                <div class="caption">Always Smiling</div>
+            </div>
         </div>
-        <div class="star-node" data-index="4">
+        <div class="star-node" data-index="4" style="--rot: 4deg;">
             <div class="glowing-star"></div>
-            <div class="polaroid" style="--rot: 5deg;"><img src="https://picsum.photos/id/237/300/300" alt="Memory 4"><p class="caption">Best Friends</p></div>
+            <div class="polaroid"><img src="https://via.placeholder.com/150">
+                <div class="caption">Best Friends</div>
+            </div>
         </div>
-        <div class="star-node" data-index="5">
+        <div class="star-node" data-index="5" style="--rot: -6deg;">
             <div class="glowing-star"></div>
-            <div class="polaroid" style="--rot: -8deg;"><img src="https://picsum.photos/id/1062/300/300" alt="Memory 5"><p class="caption">Wild Adventures</p></div>
+            <div class="polaroid"><img src="https://via.placeholder.com/150">
+                <div class="caption">Wild Adventures</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="photo-overlay">
+        <div class="overlay-polaroid">
+            <img id="overlay-img" src="">
+            <div id="overlay-caption" class="caption"></div>
         </div>
     </div>
 
     <div id="dialogue-layer" class="hidden">
-        <p class="dialogue-text" id="dialogue-text"></p>
+        <div id="dialogue-text" class="dialogue-text"></div>
     </div>
 
     <div id="climax-layer" class="hidden">
-        
-        <div class="party-banner hidden" id="party-banner">
+
+        <div id="party-banner" class="party-banner hidden">
             <div class="banner-row row-top">
                 <div class="flags-container">
-                    <div class="flag-wrapper t-1"><div class="banner-letter" style="background:#ff0080;">H</div></div>
-                    <div class="flag-wrapper t-2"><div class="banner-letter" style="background:#ff0080;">A</div></div>
-                    <div class="flag-wrapper t-3"><div class="banner-letter" style="background:#ff0080;">P</div></div>
-                    <div class="flag-wrapper t-4"><div class="banner-letter" style="background:#ff0080;">P</div></div>
-                    <div class="flag-wrapper t-5"><div class="banner-letter" style="background:#ff0080;">Y</div></div>
+                    <div class="flag-wrapper t-1">
+                        <div class="banner-letter" style="background:#ff0080">H</div>
+                    </div>
+                    <div class="flag-wrapper t-2">
+                        <div class="banner-letter" style="background:#ff8c00">A</div>
+                    </div>
+                    <div class="flag-wrapper t-3">
+                        <div class="banner-letter" style="background:#FFD700">P</div>
+                    </div>
+                    <div class="flag-wrapper t-4">
+                        <div class="banner-letter" style="background:#32CD32">P</div>
+                    </div>
+                    <div class="flag-wrapper t-5">
+                        <div class="banner-letter" style="background:#00BFFF">Y</div>
+                    </div>
                 </div>
             </div>
-            
             <div class="banner-row row-bottom">
                 <div class="flags-container">
-                    <div class="flag-wrapper b-1"><div class="banner-letter" style="background:#00BFFF;">B</div></div>
-                    <div class="flag-wrapper b-2"><div class="banner-letter" style="background:#00BFFF;">I</div></div>
-                    <div class="flag-wrapper b-3"><div class="banner-letter" style="background:#00BFFF;">R</div></div>
-                    <div class="flag-wrapper b-4"><div class="banner-letter" style="background:#00BFFF;">T</div></div>
-                    <div class="flag-wrapper b-5"><div class="banner-letter" style="background:#00BFFF;">H</div></div>
-                    <div class="flag-wrapper b-6"><div class="banner-letter" style="background:#00BFFF;">D</div></div>
-                    <div class="flag-wrapper b-7"><div class="banner-letter" style="background:#00BFFF;">A</div></div>
-                    <div class="flag-wrapper b-8"><div class="banner-letter" style="background:#00BFFF;">Y</div></div>
+                    <div class="flag-wrapper b-1">
+                        <div class="banner-letter" style="background:#8A2BE2">B</div>
+                    </div>
+                    <div class="flag-wrapper b-2">
+                        <div class="banner-letter" style="background:#ff0080">I</div>
+                    </div>
+                    <div class="flag-wrapper b-3">
+                        <div class="banner-letter" style="background:#ff8c00">R</div>
+                    </div>
+                    <div class="flag-wrapper b-4">
+                        <div class="banner-letter" style="background:#FFD700">T</div>
+                    </div>
+                    <div class="flag-wrapper b-5">
+                        <div class="banner-letter" style="background:#32CD32">H</div>
+                    </div>
+                    <div class="flag-wrapper b-6">
+                        <div class="banner-letter" style="background:#00BFFF">D</div>
+                    </div>
+                    <div class="flag-wrapper b-7">
+                        <div class="banner-letter" style="background:#8A2BE2">A</div>
+                    </div>
+                    <div class="flag-wrapper b-8">
+                        <div class="banner-letter" style="background:#d83a5e">Y</div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="festive-decorations">
-            <div class="balloon bal-1">🎈</div>
-            <div class="balloon bal-2">🎈</div>
-            <div class="sparkle sp-1">✨</div>
-            <div class="sparkle sp-2">✨</div>
-            <div class="sparkle sp-3">✨</div>
-        </div>
+        <div class="center-stage glass-panel thick-gold-frame">
+            <h1 class="glow-title-gold">Happy Birthday <span id="friendName">ALEX</span>!</h1>
+            <p class="subtitle">Here’s to another amazing year ✨</p>
 
-        <div class="center-stage glass-panel">
-            <div class="sunflower sf-tl">🌻</div>
-            <div class="sunflower sf-tr">🌻</div>
-            <div class="sunflower sf-bl">🌻</div>
-            <div class="sunflower sf-br">🌻</div>
-
-            <h1 class="glow-title"><span id="friendName">ALEX</span></h1>
-            <p class="subtitle">You are my sunshine ✨</p>
-            
-            <div class="final-photo-frame">
-                <img src="https://picsum.photos/id/103/400/400" alt="Our Favorite Moment">
-                <div class="frame-tape"></div>
+            <div class="photo-display-container">
+                <div class="final-photo-frame">
+                    <img src="https://via.placeholder.com/300" alt="Us">
+                    <div class="frame-tape"></div>
+                </div>
+                <div class="sunflower-peeker sf-peeker-1">🌻</div>
+                <div class="sunflower-peeker sf-peeker-2">🌻</div>
             </div>
-            <div class="cake-display">🎉 <span class="cake-emoji">🎂</span> 🍾</div>
+
+            <div class="cake-display">
+                <div class="cake-emoji">🎂</div>
+            </div>
+
+            <div class="foreground-garden">
+                <div class="grass-blade g-1"></div>
+                <div class="grass-blade g-2"></div>
+                <div class="garden-sunflower gs-1">🌻</div>
+                <div class="grass-blade g-3"></div>
+                <div class="garden-sunflower gs-2">🌻</div>
+                <div class="grass-blade g-4"></div>
+                <div class="grass-blade g-5"></div>
+            </div>
         </div>
 
         <p class="signature">Made with 💖 by XYZ</p>
     </div>
 
-    <div id="photo-overlay">
-        <div class="overlay-polaroid">
-            <img id="overlay-img" src="" alt="Memory">
-            <p id="overlay-caption" class="caption"></p>
-        </div>
-    </div>
-
     <script src="script.js"></script>
 </body>
+
 </html>
