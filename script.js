@@ -57,19 +57,23 @@ animateParticles();
 window.addEventListener('mousemove', (e) => createParticle(e.x, e.y));
 window.addEventListener('touchmove', (e) => createParticle(e.touches[0].clientX, e.touches[0].clientY));
 
-// --- 1. Randomize Map ---
-function randomizeStarNodes() {
-    for(let i = 1; i <= 6; i++) {
+// --- 1. Geometric Star Formation (Lowered & Scaled) ---
+function setupStarFormation() {
+    const radius = 28; // Tighter radius so it stays well within the screen
+    for(let i = 1; i <= 5; i++) {
         const node = document.querySelector(`.star-node[data-index="${i}"]`);
-        const angle = ((i - 1) * (Math.PI / 3)) + ((Math.random() - 0.5) * (Math.PI / 4)); 
-        const dist = 25 + Math.random() * 13; 
-        node.style.left = `${Math.max(10, Math.min(90, 50 + (dist * Math.cos(angle))))}%`;
-        node.style.top = `${Math.max(10, Math.min(90, 50 + (dist * Math.sin(angle) * 1.2)))}%`;
+        const angle = -Math.PI / 2 + ((i - 1) * (2 * Math.PI / 5));
+        
+        const leftPos = 50 + (radius * Math.cos(angle));
+        const topPos = 55 + (radius * Math.sin(angle) * 1.2); // Base matches center star (55%)
+        
+        node.style.left = `${leftPos}%`;
+        node.style.top = `${topPos}%`;
     }
 }
-randomizeStarNodes(); 
+setupStarFormation(); 
 
-// --- 2. Box Chase Logic (FIXED DISTANCE) ---
+// --- 2. Box Chase Logic ---
 let taps = 0; const maxTaps = 5;
 
 giftBox.addEventListener('click', (e) => {
@@ -79,18 +83,14 @@ giftBox.addEventListener('click', (e) => {
         
         let newX, newY;
         const boxRect = giftBox.getBoundingClientRect();
-        const currentX = boxRect.left; 
-        const currentY = boxRect.top;
+        const currentX = boxRect.left; const currentY = boxRect.top;
 
-        // Force the box to move at least 150px away from its current spot
         do {
             newX = Math.random() * Math.max(0, window.innerWidth - 150);
             newY = Math.random() * Math.max(0, window.innerHeight - 150);
         } while (Math.abs(newX - currentX) < 150 && Math.abs(newY - currentY) < 150);
 
-        giftBox.style.left = `${newX}px`;
-        giftBox.style.top = `${newY}px`;
-        
+        giftBox.style.left = `${newX}px`; giftBox.style.top = `${newY}px`;
         giftText.innerText = ["Catch me!", "Nope, here!", "So slow! 😜", "Almost..."][taps - 1] || "";
         if (navigator.vibrate) navigator.vibrate(50);
     } 
@@ -103,7 +103,7 @@ giftBox.addEventListener('click', (e) => {
 
 // --- 3. Constellation Phase ---
 let unlockedCount = 0; let linesData = []; let currentViewingNode = null; 
-const nodeConnections = [[0,1], [0,2], [0,3], [0,4], [0,5], [0,6], [1,2], [2,3], [3,4], [4,5], [5,6], [6,1]];
+const nodeConnections = [[0,1], [0,2], [0,3], [0,4], [0,5], [1,3], [3,5], [5,2], [2,4], [4,1]];
 
 function startConstellationPhase() {
     if(bgMusic) { bgMusic.volume = 0.2; bgMusic.play().catch(e=>console.log("Audio skipped")); }
@@ -149,7 +149,7 @@ photoOverlay.addEventListener('click', () => {
         }
     });
 
-    if (unlockedCount === 6) {
+    if (unlockedCount === 5) {
         setTimeout(() => {
             const cStar = document.querySelector('.star-node[data-index="0"]');
             cStar.classList.remove('hidden-core'); cStar.classList.add('reveal-core');
@@ -157,10 +157,25 @@ photoOverlay.addEventListener('click', () => {
             const cRect = cStar.getBoundingClientRect(); for(let i=0; i<40; i++) createParticle(cRect.left + cRect.width/2, cRect.top + cRect.height/2);
         }, 1000); 
     }
-    if(unlockedCount === starNodes.length) { instructionText.style.opacity = '0'; setTimeout(playDialogue, 400); }
+    
+    // THE CINEMATIC TRANSITION
+    if(unlockedCount === 6) { 
+        instructionText.style.opacity = '0'; 
+        
+        // 1. Let the 6th polaroid sit on the map for a brief moment
+        setTimeout(() => {
+            
+            // 2. Shrink photos, ignite stars, glow the constellation 
+            constellationLayer.classList.add('revert-to-stars');
+            
+            // 3. Hold the lit-up constellation for 2.5 seconds, then fade to dialogue
+            setTimeout(playDialogue, 2500);
+            
+        }, 1500); 
+    }
 });
 
-// --- 4. Dialogue Transition (SLICED TIMINGS) ---
+// --- 4. Dialogue Transition ---
 const messages = [
     "From all the stars in our sky...",
     "And all the memories we've made...",
@@ -177,10 +192,9 @@ function playDialogue() {
         function showNextMessage() {
             if (i < messages.length) {
                 dialogueText.innerText = messages[i]; dialogueText.classList.add('show');
-                // Sliced timing: 1.8s read time, then fast fade
                 setTimeout(() => {
                     dialogueText.classList.remove('show'); i++;
-                    setTimeout(showNextMessage, 500); // 0.5s gap between lines
+                    setTimeout(showNextMessage, 500); 
                 }, 1800); 
             } else {
                 dialogueLayer.style.opacity = '0';
