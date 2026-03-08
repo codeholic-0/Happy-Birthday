@@ -261,7 +261,10 @@ function playIntroDialogue() {
             dialogueLayer.style.display = 'flex';
             dialogueLayer.classList.remove('hidden');
             dialogueLayer.style.opacity = '1';
-
+            
+            dialogueText.innerText = "Let's look at the stars...";
+            dialogueText.classList.add('show');
+            
             setTimeout(() => {
                 dialogueText.innerText = "Let's look at the stars ✨";
                 dialogueText.classList.add('show');
@@ -371,7 +374,7 @@ photoOverlay.addEventListener('click', () => {
 
 // ─── 5. DIALOGUE TRANSITION ───
 const messages = [
-    "From my random thought this afternoon...",
+    "From my random thought at the afternoon...",
     "And the 2hrs I have spent on this...",
     "There is only one thing left to say..."
 ];
