@@ -1,214 +1,128 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Happy Birthday!</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Fredoka:wght@400;600&family=Pacifico&display=swap"
-    rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Happy Birthday!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
-
 <body>
-  <audio id="bg-music" loop>
-    <source src="song.mp3" type="audio/mpeg" />
-  </audio>
+    <audio id="bg-music" loop>
+        <source src="song.mp3" type="audio/mpeg">
+    </audio>
 
-  <div id="bg-sunset" class="bg-layer bg-sunset"></div>
-
-  <div id="bg-twilight" class="bg-layer bg-twilight">
-    <div class="moon">🌕</div>
-    <div class="shooting-star st-1"></div>
-    <div class="shooting-star st-2"></div>
-    <div class="shooting-star st-3"></div>
-  </div>
-
-  <div id="bg-climax-sunset" class="bg-layer bg-climax-sunset">
-    <div class="twinkle-star" style="top: 15%; left: 20%; animation-delay: 0s">
-      ✦
+    <div id="bg-sunset" class="bg-layer bg-sunset"></div>
+    
+    <div id="bg-twilight" class="bg-layer bg-twilight">
+        <div class="moon">🌕</div>
+        <div class="shooting-star st-1"></div>
+        <div class="shooting-star st-2"></div>
+        <div class="shooting-star st-3"></div>
     </div>
-    <div class="twinkle-star" style="top: 25%; left: 80%; animation-delay: 1.5s">
-      ✦
-    </div>
-    <div class="twinkle-star" style="top: 55%; left: 10%; animation-delay: 3s">
-      ✦
-    </div>
-    <div class="twinkle-star" style="top: 10%; left: 60%; animation-delay: 0.8s">
-      ✦
-    </div>
-    <div class="twinkle-star" style="top: 45%; left: 85%; animation-delay: 2.2s">
-      ✦
-    </div>
-    <div class="twinkle-star" style="top: 75%; left: 15%; animation-delay: 4s">
-      ✦
-    </div>
-    <div class="twinkle-star" style="top: 80%; left: 75%; animation-delay: 1.2s">
-      ✦
-    </div>
-  </div>
-
-  <!-- Floating orbs for ambient depth -->
-  <div class="ambient-orb orb-1"></div>
-  <div class="ambient-orb orb-2"></div>
-  <div class="ambient-orb orb-3"></div>
-
-  <canvas id="stardust-canvas"></canvas>
-
-  <div id="intro-layer">
-    <div class="intro-glow-ring"></div>
-    <div id="gift-box-container">
-      <div class="gift-bounce">🎁</div>
-      <div class="gift-text">Tap to open...</div>
-    </div>
-  </div>
-
-  <div id="constellation-layer" class="hidden">
-    <div class="instruction-text">Tap the stars for secrets...😶‍🌫️</div>
-
-    <svg id="constellation-lines"></svg>
-
-    <div class="star-node center-node hidden-core" data-index="0">
-      <div class="emoji-star">🌟</div>
-      <div class="polaroid">
-        <img src="images/prettylady.jpg" alt="Core Memory" />
-        <div class="caption">Star of the Show ⭐</div>
-      </div>
+    
+    <div id="bg-climax-sunset" class="bg-layer bg-climax-sunset">
+        <div class="twinkle-star" style="top: 15%; left: 20%; animation-delay: 0s;">✦</div>
+        <div class="twinkle-star" style="top: 25%; left: 80%; animation-delay: 1.5s;">✦</div>
+        <div class="twinkle-star" style="top: 55%; left: 10%; animation-delay: 3s;">✦</div>
+        <div class="twinkle-star" style="top: 10%; left: 60%; animation-delay: 0.8s;">✦</div>
+        <div class="twinkle-star" style="top: 45%; left: 85%; animation-delay: 2.2s;">✦</div>
+        <div class="twinkle-star" style="top: 75%; left: 15%; animation-delay: 4s;">✦</div>
+        <div class="twinkle-star" style="top: 80%; left: 75%; animation-delay: 1.2s;">✦</div>
     </div>
 
-    <div class="star-node" data-index="1" style="--rot: -5deg">
-      <div class="glowing-star"></div>
-      <div class="polaroid">
-        <img src="images/wtf.jpg" />
-        <div class="caption">Abegi, Bibegi 😌</div>
-      </div>
-    </div>
-    <div class="star-node" data-index="2" style="--rot: 3deg">
-      <div class="glowing-star"></div>
-      <div class="polaroid">
-        <img src="images/cool-aunty-wannabe.jpg" />
-        <div class="caption">Cool Aunty Wannabe 😎🍷</div>
-      </div>
-    </div>
-    <div class="star-node" data-index="3" style="--rot: -2deg">
-      <div class="glowing-star"></div>
-      <div class="polaroid">
-        <img src="images/husband-searching.jpg" />
-        <div class="caption">Husband Searching 👀</div>
-      </div>
-    </div>
-    <div class="star-node" data-index="4" style="--rot: 4deg">
-      <div class="glowing-star"></div>
-      <div class="polaroid">
-        <img src="images/school.jpg" />
-        <div class="caption">Bhondu Looking 🤓🤣</div>
-      </div>
-    </div>
-    <div class="star-node" data-index="5" style="--rot: -6deg">
-      <div class="glowing-star"></div>
-      <div class="polaroid">
-        <img src="images/innocent-looking.jpg" />
-        <div class="caption">Pretty Lady ✨</div>
-      </div>
-    </div>
-  </div>
+    <canvas id="stardust-canvas"></canvas>
 
-  <div id="photo-overlay">
-    <div class="overlay-polaroid">
-      <div class="overlay-tape"></div>
-      <img id="overlay-img" src="" />
-      <div id="overlay-caption" class="caption"></div>
-    </div>
-    <p class="overlay-hint">tap anywhere to continue</p>
-  </div>
-
-  <div id="dialogue-layer" class="hidden">
-    <div id="dialogue-text" class="dialogue-text"></div>
-  </div>
-
-  <div id="climax-layer" class="hidden">
-    <div id="party-banner" class="party-banner hidden">
-      <div class="banner-row row-top">
-        <div class="flags-container">
-          <div class="flag-wrapper t-1">
-            <div class="banner-letter" style="background: #ff0080">H</div>
-          </div>
-          <div class="flag-wrapper t-2">
-            <div class="banner-letter" style="background: #ff8c00">A</div>
-          </div>
-          <div class="flag-wrapper t-3">
-            <div class="banner-letter" style="background: #ffd700">P</div>
-          </div>
-          <div class="flag-wrapper t-4">
-            <div class="banner-letter" style="background: #32cd32">P</div>
-          </div>
-          <div class="flag-wrapper t-5">
-            <div class="banner-letter" style="background: #00bfff">Y</div>
-          </div>
+    <div id="intro-layer">
+        <div id="gift-box-container">
+            <div class="gift-bounce">🎁</div>
+            <div class="gift-text">Tap to open...</div>
         </div>
-      </div>
-      <div class="banner-row row-bottom">
-        <div class="flags-container">
-          <div class="flag-wrapper b-1">
-            <div class="banner-letter" style="background: #8a2be2">B</div>
-          </div>
-          <div class="flag-wrapper b-2">
-            <div class="banner-letter" style="background: #ff0080">I</div>
-          </div>
-          <div class="flag-wrapper b-3">
-            <div class="banner-letter" style="background: #ff8c00">R</div>
-          </div>
-          <div class="flag-wrapper b-4">
-            <div class="banner-letter" style="background: #ffd700">T</div>
-          </div>
-          <div class="flag-wrapper b-5">
-            <div class="banner-letter" style="background: #32cd32">H</div>
-          </div>
-          <div class="flag-wrapper b-6">
-            <div class="banner-letter" style="background: #00bfff">D</div>
-          </div>
-          <div class="flag-wrapper b-7">
-            <div class="banner-letter" style="background: #8a2be2">A</div>
-          </div>
-          <div class="flag-wrapper b-8">
-            <div class="banner-letter" style="background: #d83a5e">Y</div>
-          </div>
-        </div>
-      </div>
     </div>
 
-    <div class="center-stage glass-panel thick-gold-frame">
-      <h1 class="glow-title-gold">
-        Happy Birthday <span id="friendName">Debankan</span>!
-      </h1>
-      <p class="subtitle">Congratulations on turning 20! 🥹</p>
-
-      <div class="photo-display-container">
-        <div class="final-photo-frame">
-          <img src="images/damn.jpg" alt="Us" />
-          <div class="frame-tape"></div>
-          <div class="sunflower-overlay sf-overlay-1">🌻</div>
-          <div class="sunflower-overlay sf-overlay-2">🌻</div>
+    <div id="constellation-layer" class="hidden">
+        <div class="instruction-text">Tap the stars for secrets...😶‍🌫️</div>
+        
+        <svg id="constellation-lines"></svg>
+        
+        <div class="star-node center-node hidden-core" data-index="0">
+            <div class="emoji-star">🌟</div>
+            <div class="polaroid">
+                <img src="images/prettylady.jpg" alt="Core Memory">
+                <div class="caption">Star of the Show ⭐</div>
+            </div>
         </div>
-      </div>
-
-      <div class="cake-display">
-        <div class="cake-emoji">🎂</div>
-      </div>
-
-      <div class="author">
-        <p>~ From Debankan 🙂‍↕️</p>
-      </div>
+        
+        <div class="star-node" data-index="1" style="--rot: -5deg;"><div class="glowing-star"></div><div class="polaroid"><img src="images/wtf.jpg"><div class="caption">Abegi, Bibegi 😌</div></div></div>
+        <div class="star-node" data-index="2" style="--rot: 3deg;"><div class="glowing-star"></div><div class="polaroid"><img src="images/cool-aunty-wannabe.jpg"><div class="caption">Cool Aunty Wannabe 😎🍷</div></div></div>
+        <div class="star-node" data-index="3" style="--rot: -2deg;"><div class="glowing-star"></div><div class="polaroid"><img src="images/husband-searching.jpg"><div class="caption">Husband Searching 👀</div></div></div>
+        <div class="star-node" data-index="4" style="--rot: 4deg;"><div class="glowing-star"></div><div class="polaroid"><img src="images/school.jpg"><div class="caption">Bhondu Looking 🤓🤣</div></div></div>
+        <div class="star-node" data-index="5" style="--rot: -6deg;"><div class="glowing-star"></div><div class="polaroid"><img src="images/innocent-looking.jpg"><div class="caption">Pretty Lady ✨</div></div></div>
     </div>
-  </div>
 
-  <div id="outro-layer" class="hidden">
-    <div class="outro-text">See you next year! 😶‍🌫️</div>
-  </div>
+    <div id="photo-overlay">
+        <div class="overlay-polaroid">
+            <img id="overlay-img" src="">
+            <div id="overlay-caption" class="caption"></div>
+        </div>
+    </div>
 
-  <script src="script.js"></script>
+    <div id="dialogue-layer" class="hidden">
+        <div id="dialogue-text" class="dialogue-text"></div>
+    </div>
+
+    <div id="climax-layer" class="hidden">
+        
+        <div id="party-banner" class="party-banner hidden">
+            <div class="banner-row row-top">
+                <div class="flags-container">
+                    <div class="flag-wrapper t-1"><div class="banner-letter" style="background:#ff0080">H</div></div>
+                    <div class="flag-wrapper t-2"><div class="banner-letter" style="background:#ff8c00">A</div></div>
+                    <div class="flag-wrapper t-3"><div class="banner-letter" style="background:#FFD700">P</div></div>
+                    <div class="flag-wrapper t-4"><div class="banner-letter" style="background:#32CD32">P</div></div>
+                    <div class="flag-wrapper t-5"><div class="banner-letter" style="background:#00BFFF">Y</div></div>
+                </div>
+            </div>
+            <div class="banner-row row-bottom">
+                <div class="flags-container">
+                    <div class="flag-wrapper b-1"><div class="banner-letter" style="background:#8A2BE2">B</div></div>
+                    <div class="flag-wrapper b-2"><div class="banner-letter" style="background:#ff0080">I</div></div>
+                    <div class="flag-wrapper b-3"><div class="banner-letter" style="background:#ff8c00">R</div></div>
+                    <div class="flag-wrapper b-4"><div class="banner-letter" style="background:#FFD700">T</div></div>
+                    <div class="flag-wrapper b-5"><div class="banner-letter" style="background:#32CD32">H</div></div>
+                    <div class="flag-wrapper b-6"><div class="banner-letter" style="background:#00BFFF">D</div></div>
+                    <div class="flag-wrapper b-7"><div class="banner-letter" style="background:#8A2BE2">A</div></div>
+                    <div class="flag-wrapper b-8"><div class="banner-letter" style="background:#d83a5e">Y</div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="center-stage glass-panel thick-gold-frame">
+            <h1 class="glow-title-gold">Happy Birthday <span id="friendName">Debankan</span>!</h1>
+            <p class="subtitle"> Congratulations on turning 20! 🥹</p>
+            
+            <div class="photo-display-container">
+                <div class="final-photo-frame">
+                    <img src="images/damn.jpg" alt="Us">
+                    <div class="frame-tape"></div>
+                    <div class="sunflower-overlay sf-overlay-1">🌻</div>
+                    <div class="sunflower-overlay sf-overlay-2">🌻</div>
+                </div>
+            </div>
+
+            <div class="cake-display">
+                <div class="cake-emoji">🎂</div>
+            </div>
+            
+            <div class="author"><p>~ From Debankan 🙂‍↕️</p></div>
+        </div>
+    </div>
+
+    <div id="outro-layer" class="hidden">
+        <div class="outro-text">See you next year! 😶‍🌫️</div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
-
 </html>
