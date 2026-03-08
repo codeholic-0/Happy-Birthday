@@ -18,8 +18,11 @@ body { margin: 0; height: 100vh; overflow: hidden; font-family: 'Fredoka', sans-
 .st-1 { top: 15%; left: 80%; animation: shoot 4s infinite 1s; }
 .st-2 { top: 35%; left: 90%; animation: shoot 6s infinite 3.5s; }
 .st-3 { top: 5%; left: 40%; animation: shoot 5s infinite 5s; }
-@keyframes shoot { 0% { transform: rotate(-35deg) translateX(0); opacity: 1; } 15% { opacity: 0; } 100% { transform: rotate(-35deg) translateX(-800px); opacity: 0; } }
-
+@keyframes shoot { 
+    0% { transform: rotate(-35deg) translateX(0); opacity: 1; } 
+    15% { opacity: 0; } 
+    100% { transform: rotate(-35deg) translateX(-150vw); opacity: 0; } /* Changed to -150vw */
+}
 /* Stage 3: Vibrant Sunset Climax & Twinkling Flash Stars */
 .bg-climax-sunset { background: linear-gradient(to bottom, #2b1055 0%, #75225b 30%, #b54249 60%, #f07b3f 85%, #eaaf79 100%); opacity: 0; z-index: -2; overflow: hidden; }
 .twinkle-star { position: absolute; color: white; opacity: 0.1; font-size: 1.5rem; animation: randomTwinkle 4s infinite; pointer-events: none; }
@@ -137,7 +140,7 @@ body { margin: 0; height: 100vh; overflow: hidden; font-family: 'Fredoka', sans-
 .author p { font-family: 'Roboto'; font-size: 1.3rem; color: #bbb; margin: 0; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
 
 /* --- 4th PHASE (OUTRO) --- */
-#outro-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9000; display: none; justify-content: center; align-items: center; background: #05050a; opacity: 0; transition: opacity 1.5s ease; flex-direction: column; }
+#outro-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 99999; display: none; justify-content: center; align-items: center; background: #05050a; opacity: 0; transition: opacity 1.5s ease; flex-direction: column; }
 .outro-text { font-family: 'Dancing Script', cursive; font-size: 3.5rem; color: #fff; text-shadow: 0 0 20px rgba(255, 215, 0, 0.8); text-align: center; padding: 20px; animation: gentleBob 3s infinite alternate; }
 
 @media (max-width: 768px) {
